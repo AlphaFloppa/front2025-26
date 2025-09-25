@@ -1,0 +1,145 @@
+html{
+    font-size: 1svw;
+}
+:root {
+  /* Основные цвета */
+  --bg-slide-list: #1a1a1a;     /* Основной черный */
+  --bg-workplace: #2d2d2d;   /* Менее черный для рабочей области */
+  --bg-toolbar: #3c3c3c;    /* Панели инструментов */
+  
+  --accent-gradient: linear-gradient(135deg, #2a1a33 0%, #3a2a43 100%);
+
+  /* Текст */
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --text-tertiary: #999999;
+  
+  /* Границы и разделители */
+  --border-primary: #404040;
+  --border-secondary: #4a4a4a;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body{
+    overflow: hidden;
+    margin: 0;
+    padding: 3svh;
+    display: flex;
+    flex-flow: column nowrap;
+    width: 100svw;
+    height: 100svh;
+}
+
+.toolbar{
+    padding: 1%;
+    width: 100%;
+    height: 100px; 
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 8px rgba(138, 43, 226, 0.2);
+    background: var(--accent-gradient);
+}
+
+.workspace-wrapper{
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.preview-area{
+    position: relative;
+    padding: 1%;
+    flex-grow: 1;
+    height: 100%;
+    background-color: var(--bg-slide-list);
+    background-image: radial-gradient(circle at 1px 1px, #3d3d3d 1px, transparent 0);
+    background-size: 20px 20px;
+    border-right: 3px solid var(--border-primary);
+}
+
+.preview-area span{
+    color: white;
+}
+
+.preview-area button.add-slide{
+    position: absolute;
+    background-color: transparent;
+    top: 2%;
+    right: 2%;
+    width: 30px;
+    height: 30px;
+    border: none;
+}
+
+.workplace{
+    box-shadow: 
+            inset 0 2rem 0 0 #404040, 
+            inset 0 -2rem 0 0 #404040,
+            inset 2rem 0 0 0 #252525,
+            inset -2rem 0 0 0 #404040;
+
+    background-color: var(--bg-workplace);
+    height: 100%;
+    flex-grow: 19;
+    border: 1px solid wheat;
+    padding: 8%;
+}
+
+.toolbar section{
+    height: 80%;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    gap: 20%;
+    padding: 0;
+    width: fit-content;
+}
+
+.toolbar section.add-object{
+    border-right: 2px solid wheat;
+}
+
+.toolbar section button{
+    width: 40px;
+    height: 40px;
+    padding: 2px;
+}
+
+.icon{
+    object-fit: cover;
+}
+
+button{
+    cursor: pointer;
+}
+
+.textarea-container {
+  position: relative;
+  width: 70%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.beautiful-textarea {
+  width: 100%;
+  height: 7%;
+  padding: 2%;
+  font-size: 1rem;
+  font-style: italic;
+  color: white;
+  background: transparent;
+  border-radius: 0.1rem;
+  border: none;
+  outline: none;
+  outline-color: #0078d4;
+  transition: all 0.2s ease;
+}
+
+.beautiful-textarea:focus {
+  outline: 0.18rem solid #0078d4;
+}
