@@ -1,0 +1,17 @@
+.icon{
+    object-fit: cover;
+}
+
+button{
+    cursor: pointer;
+}
+
+.add-slide{
+    position: absolute;
+    background-color: transparent;
+    top: 2%;
+    right: 2%;
+    width: 30px;
+    height: 30px;
+    border: none;
+}
