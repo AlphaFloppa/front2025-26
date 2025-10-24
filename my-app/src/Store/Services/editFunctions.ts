@@ -1,7 +1,7 @@
 import type {Presentation} from "../Model/presentation";
 import type {Slide} from "../Model/slide";
 import type {Size, Position} from "../Model/slideContent"
-import type {SlideObject} from "../Model/slideContent";
+import type {SlideObject, Text, ImageObject} from "../Model/slideContent";
 import type {Background} from "../Model/slideContent";
 
 function renamePresentation(presentation: Presentation, payload: {newName: string}): Presentation {
@@ -28,31 +28,34 @@ function removeSlide(presentation: Presentation, payload: {id: string}): Present
     };
 }
 
+function verify<T>(value: T | undefined | null) {
+    if (!value) {
+        throw new Error()
+    }
+    return value
+}
+
+
 //move slide set by indexes array
 function replaceSlide(presentation: Presentation, payload: {order: string[]}): Presentation {
     return {
         ...presentation,
         slides: payload.order.map( 
-            slideId => presentation.slides.filter(slide => slide.id === slideId)[0] ?? {
-                id: slideId,
-                header: "",
-                objects: [],
-                background: {
-                    type: "color",
-                    code: "#FFFFFF"
-                }
-            })
+            slideId => verify(presentation.slides.find(slide => slide.id === slideId))          //verify
+        )
     };
 }
 
-function removeObjectFromSlide(presentation: Presentation, payload: {slideId: string, removingObjectId: string}): Presentation{
+function removeObjectsFromSlide(presentation: Presentation, payload: { slideId: string, removingObjectsId: string[] }): Presentation {
     return {
         ...presentation,
         slides: presentation.slides.map(slide => 
                     slide.id === payload.slideId         //только ===
                         ? {
                             ...slide,
-                            objects: slide.objects.filter(slideObj => slideObj.id != payload.removingObjectId)
+                        objects: slide.objects.filter(
+                            slideObj => !payload.removingObjectsId.find(id => slideObj.id === id)
+                        )
                         } 
                         : slide
                 )
@@ -62,7 +65,9 @@ function removeObjectFromSlide(presentation: Presentation, payload: {slideId: st
 function addObjectToSlide(                    //одна функция под текст и картинку
     presentation: Presentation, 
     payload: {slideId: string, object: SlideObject}
-): Presentation{                //собрать текст снаружи
+): Presentation{//собрать текст снаружи
+    console.log(presentation);
+    console.log(payload);
     return {
         ...presentation,
         slides: presentation.slides.map(slide =>                 //говорящие названия в funcs
@@ -215,7 +220,7 @@ function editBackground(
     return{
         ...presentation,
         slides: presentation.slides.map(slide => 
-            slide.id == payload.slideId 
+            slide.id === payload.slideId 
                 ? {
                     ...slide,
                     background: payload.bg
@@ -225,10 +230,68 @@ function editBackground(
     };
 }
 
+function disposeImagesUrls(presentation: Presentation, payload: { targetSlideId: string, objectsIds: string[] }) {
+    presentation.slides.map(slide =>  
+        slide.id === payload.targetSlideId
+            ? slide.objects.filter(object => 
+                payload.objectsIds.find(objectId => objectId === object.id))
+                .map(object => { object.type === "image" ? window.URL.revokeObjectURL(object.src) : null})
+            : null
+    )
+}
+
+function createSlide(payload: {id: string}): Slide {
+    return {
+        id: payload.id,
+        header: "New slide",
+        objects: [],
+        background: {
+            type: "color",
+            code: "#FFFFFF"
+        }
+    };
+}
+
+function createPresentation(): Presentation { 
+    return {
+        slides: [],
+        name: "Unnamed1"
+    }
+}
+
+function createTextObject(payload: { id: string, position: Position }): Text {
+    return {
+        type: "text",
+        font: {
+            fontFamily: "sans-serif",
+            fontSize: 25
+        },
+        color: "#FFFFFF",
+        content: "Текст",
+        size: {
+            width: 20,
+            height: 10
+        },
+        layer: 1,
+        ...payload
+    };
+}
+
+function createImageObject(payload: { id: string, position: Position, src: string }): ImageObject {
+    return {
+        type: "image",
+        size: {
+            width: 100,
+            height: 100
+        },
+        layer: 1,
+        ...payload
+    }
+}
 
 export {
     renamePresentation,
-    removeObjectFromSlide,
+    removeObjectsFromSlide,
     removeSlide,
     resizeSlideObject,
     replaceSlide,
@@ -238,5 +301,11 @@ export {
     editText,
     addObjectToSlide,
     addSlide,
-    moveSlideObject   
+    moveSlideObject,
+    createSlide,
+    verify,
+    createPresentation,
+    disposeImagesUrls,
+    createImageObject,
+    createTextObject
 }

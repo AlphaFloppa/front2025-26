@@ -1,0 +1,25 @@
+.colorBg{
+    background-color: var(--definedBgColor);
+}
+
+.imageBg{
+    background: var(--definedBgImage) center/cover no-repeat;
+}
+
+.slide{
+    position: relative;
+    border-radius: 0.7rem;
+    height: 100%;
+    aspect-ratio: 16/9;
+    border: 1px solid wheat;
+    overflow: hidden;
+    font-size: 1rem;
+}
+
+.mini{
+    font-size: 0.2124rem;
+}
+
+.mini *{
+    user-select: none;
+}

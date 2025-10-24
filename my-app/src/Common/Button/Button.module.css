@@ -1,17 +1,26 @@
-.icon{
-    object-fit: cover;
-}
-
-button{
+.button{
+    width: 100%;
+    aspect-ratio: 1/1;
+    border: none;
     cursor: pointer;
 }
 
-.add-slide{
-    position: absolute;
-    background-color: transparent;
-    top: 2%;
-    right: 2%;
-    width: 30px;
-    height: 30px;
-    border: none;
+.addSlide{
+    background: url("../../assets/addSlideBtn.svg") center/cover no-repeat;
+}
+
+.addImage {
+    background: url("../../assets/addImageBtn.svg") center/cover no-repeat;
+}
+
+.addText {
+    background: url("../../assets/addText.svg") center/cover no-repeat;
+}
+
+.editFontFamily {
+    background: url("../../assets/editFontFamilyBtn.svg") center/cover no-repeat;
+}
+
+.editFontSize {
+    background: url("../../assets/editFontSizeBtn.svg") center/cover no-repeat;
 }

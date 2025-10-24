@@ -1,4 +1,6 @@
-{
+import type { Presentation } from "../../../Model/presentation";
+
+let presentation: Presentation = {
     "name": "Моя первая презентация",
     "slides": [
         {
@@ -166,4 +168,8 @@
             ]
         }
     ]
+}
+
+export{
+    presentation
 }

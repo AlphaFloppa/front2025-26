@@ -1,23 +1,34 @@
-import type { Slide } from "../../Store/Model/slide";
+import type { Presentation } from "../../Store/Model/presentation";
+import { Button } from "../../Common/Button/Button";
+import { PresentationNameEditor } from "../presentationNameEditor/PresentationNameEditor";
+import { SlidesList } from "../SlidesList/SlidesList";
+import style from "./PreviewArea.module.css";
 
-export function PreviewArea(
-    props: {
-        presentationName: string,
-        addSlideBtnIconSrc: string,
-        slides: Slide[], 
-        eventHandlers:{
-            addBtn: Function,
-            changePresentationName: Function
-        }
+type PreviewAreaProps = {
+    presentation: Presentation,
+    eventHandlers:{
+        addBtn: Function,
+        changePresentationName: Function
     }
-){
-    return
-        <>
-            <Button clickHandler = {() => props.eventHandlers.addBtn} iconSrc = {props.addSlideBtnIconSrc}/>
-            <PresentationNameField 
-                name = {props.presentationName} 
-                changeHandler = {() => props.eventHandlers.changePresentationName}
+}
+
+function PreviewArea(
+    { presentation: { name, slides}, eventHandlers}: PreviewAreaProps
+) {
+    return (
+        <div className={style.previewArea}>
+            <div className={style.buttonWrapper}>
+                <Button clickHandler={() => { eventHandlers.addBtn() }} destination="addSlide" />
+            </div>
+            <PresentationNameEditor 
+                currentName = {name} 
+                changeHandler={eventHandlers.changePresentationName}
             />
-            <SlidesList list = {props.slides}/>
-        </>;
+            <SlidesList list = {slides}/>
+        </div>
+    );
+}
+
+export {
+    PreviewArea
 }

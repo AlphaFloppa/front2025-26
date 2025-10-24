@@ -29,7 +29,7 @@ body{
     padding: 3svh;
     display: flex;
     flex-flow: column nowrap;
-    width: 100svw;
+    width: 100svw; 
     height: 100svh;
 }
 

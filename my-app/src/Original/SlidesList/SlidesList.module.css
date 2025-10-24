@@ -1,0 +1,30 @@
+.slideWrapper{
+    height: 22%;
+    padding: 0 10%;
+    flex-shrink: 0;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.slideWrapper::marker{
+    display: none;
+}
+
+.slideHeader {
+    text-align: center;
+    font-size: 0.8rem;
+    font-style: oblique;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.slideList{
+    all: unset;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    padding: 0 3% 0 0;
+    overflow-y: auto;
+    gap: 0.7rem;
+}

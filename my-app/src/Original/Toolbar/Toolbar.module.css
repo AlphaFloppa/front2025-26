@@ -1,12 +1,17 @@
+:root{
+    --accent-gradient: linear-gradient(135deg, #2a1a33 0%, #3a2a43 100%);
+}
+
 .toolbar{
     padding: 1%;
     width: 100%;
-    height: 100px; 
+    height: 5rem;
+    min-height: 70px; 
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
-    gap: 1rem;
-    box-shadow: 0 2px 8px rgba(138, 43, 226, 0.2);
+    gap: 3rem;
+    box-shadow: 0 2px 8px rgb(138 43 226 / 20%);
     background: var(--accent-gradient);
 }
 

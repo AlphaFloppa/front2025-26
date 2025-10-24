@@ -11,12 +11,13 @@ type Size = {
 type BaseObject = {
     id: string, 
     position: Position,
-    size: Size
+    size: Size,
+    layer: number
 }
 
 type Image = {
-    src: string,
     type: "image"
+    src: string,
 }
 
 type Text = BaseObject & {
@@ -45,5 +46,7 @@ export type {
     Background,
     Size,
     Position,
-    Image
+    Image,
+    Text,
+    ImageObject
 }

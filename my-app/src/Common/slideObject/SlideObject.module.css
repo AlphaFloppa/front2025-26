@@ -1,0 +1,36 @@
+.image,
+.text {
+   position: absolute;
+   inset: var(--definedPosition);
+   width: var(--definedWidth);
+   height: var(--definedHeight);
+   z-index: var(--definedLayer);
+   outline: 3px dashed green;
+   border-radius: 0.35rem;
+   border: none;
+}
+
+ .text{
+    color: var(--definedTextColor);
+    font-family: var(--definedTextFontFamily);
+    font-size: var(--definedTextFontSize);
+    width: fit-content;
+    height: fit-content;
+    background-color: transparent;
+    resize: none;
+ }
+
+ .text.focusable:focus,
+ .image.focusable:focus{
+   box-shadow: 0 0 4px 3px rgb(128, 0, 255);
+   outline: none;
+ }
+
+ .image{
+    background: var(--definedImageSource) center/cover no-repeat;
+ }
+
+ .image:not(.focusable){
+   width: calc(0.21 * var(--definedWidth));
+   height: calc(0.21 * var(--definedHeight));
+ }
