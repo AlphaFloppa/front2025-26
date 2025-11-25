@@ -1,4 +1,4 @@
-import type { Presentation } from "../../../Model/presentation"
+import type { Presentation } from "../../Model/presentation"
 
 let presentation: Presentation = {
     name: "Моя первая презентация",
@@ -15,7 +15,7 @@ let presentation: Presentation = {
                     id: "obj_1_1",
                     type: "text",
                     position: { x: 20, y: 50 },
-                    size: { width: 80, height: 60 },
+                    size: { width: 10, height: 10 },
                     font: {
                         fontFamily: "Arial",
                         fontSize: 38
@@ -28,7 +28,7 @@ let presentation: Presentation = {
                     id: "obj_1_2",
                     type: "text",
                     position: { x: 50, y: 50 },
-                    size: { width: 50, height: 40 },
+                    size: { width: 7, height: 20 },
                     font: {
                         fontFamily: "Georgia",
                         fontSize: 30
@@ -41,7 +41,7 @@ let presentation: Presentation = {
                     id: "obj_1_3",
                     type: "image",
                     position: { x: 10, y: 35 },
-                    size: { width: 150, height: 150 },
+                    size: { width: 30, height: 30 },
                     src: "./src/assets/react.svg",
                     layer: 3
                 },
@@ -49,7 +49,7 @@ let presentation: Presentation = {
                     id: "obj_1_4",
                     type: "image",
                     position: { x: 70, y: 80 },
-                    size: { width: 80, height: 78 },
+                    size: { width: 15, height: 8 },
                     src: "https://share.google/images/sXVZJYBvAKGZTgPjt",
                     layer: 4
                 },
@@ -57,7 +57,7 @@ let presentation: Presentation = {
                     id: "obj_1_5",
                     type: "text",
                     position: { x: 50, y: 20 },
-                    size: { width: 30, height: 80 },
+                    size: { width: 10, height: 20 },
                     font: {
                         fontFamily: "Courier New",
                         fontSize: 50

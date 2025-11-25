@@ -1,9 +1,7 @@
 import type { Slide as SlideType } from "../../Store/Model/slide"
-import { SlideComponent as Slide } from "../../Common/slide/Slide";
+import { LiteSlide as Slide } from "../../Common/slide/previewSlide/Slide";
 import style from "./SlidesList.module.css";
-import * as Services from "../../Store/Services/editFunctions";
-import { editor } from "../../Store/Model/editor";
-import { useContextMenu, useContextMenuTemplate} from "../../Common/ContextMenu/ContextMenu.hooks";
+import { useContextMenu, useContextMenuTemplate } from "../../Common/ContextMenu/ContextMenu.hooks";
 
 type SlidesListProps = {
     list: SlideType[],
@@ -11,31 +9,19 @@ type SlidesListProps = {
     onContextMenuHandler?: Function
 }
 
-//const slideClickHandler = (slideIndex: number) => { console.log("you pressed at slide №" + slideIndex.toString()) };
-
-function SlidesList({ list, onClickHandler, onContextMenuHandler }: SlidesListProps) {
-    const { slideListSlideCM: CMTemplate} = useContextMenuTemplate();
-    const { turnOn: enableCM } = useContextMenu();
+function SlidesList({ list }: SlidesListProps) {
+    const { createSlideListCM } = useContextMenuTemplate();
+    const { turnOn: enableCM, turnOff: disableCM} = useContextMenu();
     const slideContextMenuHandler = (                       //сборка вне и прокидывание в пропсах
-        { nativeEvent: { offsetX: x, offsetY: y }, preventDefault }: React.MouseEvent<HTMLDivElement>,
+        e: React.MouseEvent<HTMLDivElement>,
         slide: SlideType
-    ) => {             
-        preventDefault();
+    ) => {
+        const { clientX: x, clientY: y } = e;
+        e.preventDefault();
         enableCM(
             {
                 position: {x, y},
-                template: {
-                    options: CMTemplate.options.map(
-                        option => (
-                            {
-                                ...option,
-                                clickHandler: () => {
-                                    option.clickHandler(slide)
-                                }
-                            }
-                        )
-                    )                    
-                }
+                template: createSlideListCM([() => { disableCM(); }], slide)
             }
         )
     };
@@ -43,22 +29,21 @@ function SlidesList({ list, onClickHandler, onContextMenuHandler }: SlidesListPr
         <ol className={style.slideList}>
             {
                 list.map(
-                    (slide: SlideType, slideIndex: number) => 
-                    (
-                        <li key={slide.id} className={style.slideWrapper}>  
-                            <Slide
-                                slide={slide}
-                                slideIndex={slideIndex}
-                                eventHandlers={{
-                                    contextMenu: (e) => { slideContextMenuHandler(e, slide) }
-                                }}
-                                isMini={true}
-                            />
-                            <span className={style.slideHeader}>
-                                {slide.header}
-                            </span>
-                        </li>
-                    )
+                    (slide: SlideType) => {
+                        return (
+                            <li key={slide.id} className={style.slideWrapper}>
+                                <Slide
+                                    slide={slide}
+                                    eventHandlers={{
+                                        contextMenuHandler: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => { slideContextMenuHandler(e, slide) }
+                                    }}
+                                />
+                                <span className={style.slideHeader}>
+                                    {slide.header}
+                                </span>
+                            </li>
+                        )
+                    }
                 )
             }
          </ol>

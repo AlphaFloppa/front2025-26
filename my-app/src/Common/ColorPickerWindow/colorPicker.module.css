@@ -1,0 +1,19 @@
+.menu{
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.buttonsGroup{
+    width: 100%;
+    height: fit-content;
+    padding: 0 5%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10%;
+}

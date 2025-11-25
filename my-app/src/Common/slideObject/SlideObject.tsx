@@ -1,137 +1,210 @@
-import type { CSSProperties } from "react";
+import { forwardRef, useRef } from "react";
 import type { SlideObject as SlideObjectType } from "../../Store/Model/slideContent";
-import style from "../slideObject/SlideObjectType.module.css";
-import { verify } from "../../Store/Services/editFunctions";
-import { dispatchSlideObjectSelection, editor } from "../../Store/Model/editor";
+import style from "../slideObject/SlideObject.module.css";
+import controlsStyle from "./slideObjectControl.module.css";
 import { useContextMenu, useContextMenuTemplate } from "../ContextMenu/ContextMenu.hooks";
+import type React from "react";
+import { useEditor } from "../../hooks/editor.hooks";
+import { useResize } from "../../hooks/resize.hooks";
+import { getClickRelativePositionAtSlide } from "../slide/Slide";
+import { setObjectProps } from "./slideObject.styles";
 
 type SlideObjectProps = {
     object: SlideObjectType,
-    isFocusable: boolean,
+    containerRef: React.RefObject<HTMLDivElement | null>,
     eventHandlers: {
-        clickHandler?: Function,
+        mouseDownHandler?: Function,
         contextMenuHandler?: Function
     }
 }
 
-const setObjectConstantProps = (object: SlideObjectType)=>
-    (
-        {
-            "--definedPosition": `${object.position.y}% ${object.position.x}%`,
-            "--definedWidth": `${object.size.width}px`,
-            "--definedHeight": `${object.size.height}px`,
-            "--definedLayer": `${object.layer}`
-        }
-    ) as CSSProperties;
+const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
+    ({ object, eventHandlers: { mouseDownHandler, contextMenuHandler }, containerRef }: SlideObjectProps, ref) => {
+        const {
+            useDispatch,
+            useSelector
+        } = useEditor();
+        const { createSlideObjectCM } = useContextMenuTemplate();
+        const { turnOn: enableCM, turnOff: disableCM, state: { isEnabled: isCMEnabled } } = useContextMenu();
 
-const setObjectVariableProps = (object: SlideObjectType)=>
-    (
-        object.type === "text"
-            ? (
+        const LUControlDOMNodeRef = useRef<HTMLDivElement | null>(null);
+        const LLControlDOMNodeRef = useRef<HTMLDivElement | null>(null);
+        const RUControlDOMNodeRef = useRef<HTMLDivElement | null>(null);
+        const RLControlDOMNodeRef = useRef<HTMLDivElement | null>(null);
+
+        useResize(
+            {
+                controlsRefs:
                 {
-                    "--definedTextColor": `${object.color}`,
-                    "--definedTextFontFamily": `${object.font.fontFamily}`,
-                    "--definedTextFontSize": `${object.font.fontSize/20}em`
-                } as CSSProperties
-            )
-            : (
+                    leftUpper: {
+                        objectRef: LUControlDOMNodeRef
+                    },
+                    leftLower: {
+                        objectRef: LLControlDOMNodeRef,
+                    },
+                    rightUpper: {
+                        objectRef: RUControlDOMNodeRef,
+                    },
+                    rightLower: {
+                        objectRef: RLControlDOMNodeRef,
+                    }
+                },
+                controlsOwnContainerRef: containerRef,
+                onResize: (
+                    { deltaWidth, deltaHeight, isControlUpper, isControlLeft }:
+                        { deltaWidth: number, deltaHeight: number, isControlUpper: boolean, isControlLeft: boolean }
+                ) => {
+                    const { x: width, y: height } = getClickRelativePositionAtSlide(
+                        {
+                            offsetX: deltaWidth,
+                            offsetY: deltaHeight
+                        },
+                        containerRef.current
+                    );
+                    useDispatch().
+                        resizeSlideObject(
+                            useSelector(state => state.selection).selectedSlides[0],
+                            object.id,
+                            {
+                                width,
+                                height
+                            },
+                            isControlUpper,
+                            isControlLeft
+                        )
+                },
+                onStart: () => { },
+                onFinish: () => { }
+            }
+        );
+
+        const isSelected = useSelector(state => state.selection).selectedSlideObjects.some(selectedSlideObjectId => selectedSlideObjectId === object.id);
+
+        const slideContextMenuHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+            if (!useSelector(state => state.selection.selectedSlideObjects).find(            //если не выделен
+                selectedObjectId => selectedObjectId === object.id)
+            ) {
+                return;
+            }
+            e.preventDefault();
+            e.stopPropagation();
+            const { clientX: x, clientY: y } = e;
+            enableCM(
                 {
-                    "--definedImageSource": `url(${object.src})`
-                } as CSSProperties
+                    position: { x, y },
+                    template: createSlideObjectCM([() => { disableCM(); }])
+                }
             )
-    );
+            contextMenuHandler?.();
+        };
 
-const setObjectProps = (object: SlideObjectType) =>
-    (
-        {
-            ...setObjectConstantProps(object),
-            ...setObjectVariableProps(object)
-        }
-    ) as CSSProperties;
-
-function SlideObject({ object, isFocusable, eventHandlers: { clickHandler, contextMenuHandler } }: SlideObjectProps) {         //TODO: verify object by verify()
-    const { slideListSlideCM: CMTemplate } = useContextMenuTemplate();
-    const { turnOn: enableCM } = useContextMenu();
-    return(
-        object.type === "text"
-        ? (
-            <textarea
-                tabIndex={isFocusable ? 0 : -1}
-                contentEditable={isFocusable}
-                className={`${style.text} ${isFocusable ? style.focusable : null}`}
-                style={setObjectProps(object)}
-                onClick={
-                    isFocusable
-                    ? ({ stopPropagation }) => {
-                        stopPropagation();
-                        dispatchSlideObjectSelection(object.id);            //отметка объекта в модуле editor как выделенного
-                        verify(clickHandler)();               //другая нагрузка
-                    }
-                    : undefined
-                }
-                onContextMenu={
-                    isFocusable && !editor.contextMenu.isEnabled                //если не в превью и нет активного меню
-                        ? ({ stopPropagation, preventDefault, clientX: x, clientY: y}) => {
-                            if (!editor.selection.selectedSlideObjects.find(            //если не выделен
-                                selectedObjectId => selectedObjectId === object.id)
-                            ) { 
-                                return;
-                            }
-                            preventDefault();
-                            stopPropagation();
-                            enableCM(
-                                {
-                                    position: { x, y },
-                                    template: CMTemplate
-                                }
-                            )
-                            verify(contextMenuHandler)();
-                        }
-                        : undefined
-                }
-            >
-                {object.content}
-            </textarea>
-        )
-        : (
-                <div
-                    tabIndex={isFocusable ? 0 : -1}
-                    className={`${style.image} ${isFocusable ? style.focusable : null}`}
-                    style={setObjectProps(object)}
-                    onClick={
-                        isFocusable
-                            ? ({ stopPropagation }) => {
-                                stopPropagation();
-                                dispatchSlideObjectSelection(object.id);            //отметка объекта в модуле editor как выделенного
-                                verify(clickHandler)();               //другая нагрузка
-                            }
-                            : undefined
-                    }
-                    onContextMenu={
-                        isFocusable && !editor.contextMenu.isEnabled                //если не в превью и нет активного меню
-                            ? ({ stopPropagation, preventDefault, clientX: x, clientY: y }) => {
-                                if (!editor.selection.selectedSlideObjects.find(            //если не выделен
-                                    selectedObjectId => selectedObjectId === object.id)
-                                ) {
-                                    return;
-                                }
-                                preventDefault();
-                                stopPropagation();
-                                enableCM(
-                                    {
-                                        position: { x, y },
-                                        template: CMTemplate
+        return (
+            <>
+                {object.type === "text"
+                    ? (
+                        <div
+                            ref={
+                                (node) => {
+                                    if (ref) {
+                                        if (typeof ref !== "function") {
+                                            ref.current = node;
+                                        }
                                     }
-                                )
-                                verify(contextMenuHandler)();
+                                }
                             }
-                            : undefined
-                    }
-                >
-                </div>
-        )
-    );
-}
+                            className={`${style.textWrapper} ${style.focusable} ${isSelected ? style.selected : null}`}
+                            style={setObjectProps(object)}
+                            onClick={
+                                (e) => {
+                                    e.stopPropagation();
+                                    disableCM();
+                                    useDispatch().selectSlideObject(object.id, e.ctrlKey);
+                                    //другая нагрузка
+                                }
+                            }
+                            onContextMenu={
+                                !isCMEnabled      //если не в превью и нет активного меню
+                                    ? slideContextMenuHandler
+                                    : undefined
+                            }
+                            onMouseDown={
+                                (e) => {
+                                    e.preventDefault();
+                                    mouseDownHandler?.(e);
+                                }
+                            }
+                        >
+                            {
+                                isSelected &&
+                                (
+                                    <>
+                                        <div ref={LUControlDOMNodeRef} className={`${controlsStyle.LU} ${controlsStyle.controlPoint}`}></div>
+                                        <div ref={LLControlDOMNodeRef} className={`${controlsStyle.LL} ${controlsStyle.controlPoint}`}></div>
+                                        <div ref={RUControlDOMNodeRef} className={`${controlsStyle.RU} ${controlsStyle.controlPoint}`}></div>
+                                        <div ref={RLControlDOMNodeRef} className={`${controlsStyle.RL} ${controlsStyle.controlPoint}`}></div>
+                                    </>
+                                )
+                            }
+                            <textarea
+                                readOnly={true}
+                                tabIndex={0}
+                                className={style.text}
+                                onChange={() => { }}
+                                value={object.content}
+                            >
+                            </textarea>
+                        </div>
+
+                    )
+                    : (
+                        <div
+                            ref={
+                                (node) => {
+                                    if (ref) {
+                                        if (typeof ref !== "function") {
+                                            ref.current = node;
+                                        }
+                                    }
+                                }
+                            }
+                            tabIndex={0}
+                            className={`${style.image} ${style.focusable} ${isSelected ? style.selected : null}`}
+                            style={setObjectProps(object)}
+                            onClick={
+                                (e) => {
+                                    e.stopPropagation();
+                                    useDispatch().selectSlideObject(object.id, e.ctrlKey);
+                                    //другая нагрузка
+                                }
+                            }
+                            onContextMenu={
+                                !isCMEnabled               //если не в превью и нет активного меню
+                                    ? slideContextMenuHandler
+                                    : undefined
+                            }
+                            onMouseDown={
+                                (e) => {
+                                    e.preventDefault();
+                                    mouseDownHandler?.(e);
+                                }
+                            }
+                        >
+                            {
+                                isSelected &&
+                                (
+                                    <>
+                                        <div ref={LUControlDOMNodeRef} className={`${controlsStyle.LU} ${controlsStyle.controlPoint}`}></div>
+                                        <div ref={LLControlDOMNodeRef} className={`${controlsStyle.LL} ${controlsStyle.controlPoint}`}></div>
+                                        <div ref={RUControlDOMNodeRef} className={`${controlsStyle.RU} ${controlsStyle.controlPoint}`}></div>
+                                        <div ref={RLControlDOMNodeRef} className={`${controlsStyle.RL} ${controlsStyle.controlPoint}`}></div>
+                                    </>
+                                )
+                            }
+                        </div>
+                    )}
+            </>
+        );
+    })
 
 export {
     SlideObject

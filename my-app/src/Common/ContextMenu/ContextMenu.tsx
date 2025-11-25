@@ -2,9 +2,9 @@ import type { CSSProperties } from "react";
 import type { Position } from "../../Store/Model/slideContent";
 import style from "./ContextMenu.module.css";
 import type { ContextMenu as ContextMenuType } from "../../Store/Model/contextMenu";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useContext } from "react";
 import { verify } from "../../Store/Services/editFunctions";
-import { dispatchContextMenuOff } from "../../Store/Model/editor";
+import { useContextMenu } from "./ContextMenu.hooks";
 
 type ContextMenuProps = {
     position: Position,
@@ -22,6 +22,7 @@ const definePosition = (position: Position): CSSProperties =>
 );
 
 function ContextMenu({ position, menu: { options } }: ContextMenuProps) {
+    const { turnOff: disableCM } = useContextMenu();
     let inputRef = useRef(null);
     let storage = useRef("");
     let [isInputRefEnabled, setIsInputRefEnabled] = useState(false);
@@ -45,7 +46,7 @@ function ContextMenu({ position, menu: { options } }: ContextMenuProps) {
                                             inputRef.current.click();       //инициирование события на input для записи в useRef файла                                            
                                         }
                                         : () => { })
-                                    : (e) => { e.stopPropagation(); clickHandler(e); dispatchContextMenuOff();}
+                                    : (e) => { e.stopPropagation(); clickHandler(e); }
                             }
                         >
                             {name}
@@ -62,7 +63,6 @@ function ContextMenu({ position, menu: { options } }: ContextMenuProps) {
                                                 const importedFile = verify(e.currentTarget.files)[0];
                                                 storage.current = fileToUrl(importedFile);
                                                 clickHandler(storage.current);
-                                                dispatchContextMenuOff();
                                                 //запись в useRef опции
                                             }}
                                         />

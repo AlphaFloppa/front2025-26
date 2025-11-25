@@ -24,3 +24,21 @@
 .editFontSize {
     background: url("../../assets/editFontSizeBtn.svg") center/cover no-repeat;
 }
+
+.applyBtn,
+.cancelBtn{
+    background-color: #333333;
+    color: #e0e0e0;
+    box-shadow: 0 0 0 4px white;
+    padding: 0.1rem 0.2rem;
+    border-radius: 0.4rem;
+    width: 30%;
+    height: 3rem;
+    transition: all 0.3s;
+}
+
+.applyBtn:hover,
+.cancelBtn:hover{
+    box-shadow: 0 0 0 2px white;
+    transform: scale(1.1);
+}

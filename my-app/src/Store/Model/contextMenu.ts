@@ -3,7 +3,7 @@ import * as Services from "../Services/editFunctions";
 
 type ContextMenuOption = {
     name: string,
-    clickHandler: Function              //TODO: добавить поле isForUpload => условное отображение в компоненте
+    clickHandler: Function           
     isForUpload?: boolean  
 };                                        
 

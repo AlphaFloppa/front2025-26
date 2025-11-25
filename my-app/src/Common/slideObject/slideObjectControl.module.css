@@ -1,0 +1,35 @@
+.controlPoint{
+    width: 12px;
+    height: 12px;
+    background-color: rgb(3, 106, 180);
+    position: absolute;
+    border-radius: 20%;
+}
+
+.LU{
+    left: 0;
+    top: 0;
+    cursor: nw-resize;
+    transform: translate(-50%, -50%);
+}
+
+.LL{
+    left: 0;
+    bottom: 0;
+    cursor: ne-resize;
+    transform: translate(-50%, 50%);
+}
+
+.RU{
+    right: 0;
+    top: 0;
+    cursor: sw-resize;
+    transform: translate(50%, -50%);
+}
+
+.RL{
+    right: 0;
+    bottom: 0;
+    cursor: se-resize;
+    transform: translate(50%, 50%);
+}

@@ -1,31 +1,18 @@
-import type {Presentation} from "../Model/presentation";
-import type {Slide} from "../Model/slide";
-import type {Size, Position} from "../Model/slideContent"
-import type {SlideObject, Text, ImageObject} from "../Model/slideContent";
-import type {Background} from "../Model/slideContent";
+import type { Presentation } from "../Model/presentation";
+import type { Slide } from "../Model/slide";
+import type { Size, Position } from "../Model/slideContent"
+import type { SlideObject, Text, ImageObject } from "../Model/slideContent";
+import type { Background } from "../Model/slideContent";
 
-function renamePresentation(presentation: Presentation, payload: {newName: string}): Presentation {
-    return {
-        ...presentation, 
-        name: payload.newName
-    };
+function addSlide(slides: Slide[], payload: { slide: Slide }): Slide[] {
+    return [
+        ...slides,
+        payload.slide,
+    ];
 }
 
-function addSlide(presentation: Presentation, payload: {slide: Slide}): Presentation {
-    return {
-        ...presentation,
-        slides: [
-            ...presentation.slides,
-            payload.slide,
-        ]
-    };
-}
-
-function removeSlide(presentation: Presentation, payload: {id: string}): Presentation {
-    return {
-        ...presentation,
-        slides: presentation.slides.filter(slide => slide.id != payload.id)
-    };
+function removeSlide(slides: Slide[], payload: { id: string }): Slide[] {
+    return slides.filter(slide => slide.id != payload.id);
 }
 
 function verify<T>(value: T | undefined | null) {
@@ -37,210 +24,209 @@ function verify<T>(value: T | undefined | null) {
 
 
 //move slide set by indexes array
-function replaceSlide(presentation: Presentation, payload: {order: string[]}): Presentation {
+function replaceSlide(presentation: Presentation, payload: { order: string[] }): Presentation {
     return {
         ...presentation,
-        slides: payload.order.map( 
+        slides: payload.order.map(
             slideId => verify(presentation.slides.find(slide => slide.id === slideId))          //verify
         )
     };
 }
 
-function removeObjectsFromSlide(presentation: Presentation, payload: { slideId: string, removingObjectsId: string[] }): Presentation {
-    return {
-        ...presentation,
-        slides: presentation.slides.map(slide => 
-                    slide.id === payload.slideId         //только ===
-                        ? {
-                            ...slide,
-                        objects: slide.objects.filter(
-                            slideObj => !payload.removingObjectsId.find(id => slideObj.id === id)
-                        )
-                        } 
-                        : slide
+function removeObjectsFromSlide(slides: Slide[], payload: { slideId: string, removingObjectsIds: string[] }): Slide[] {
+    function disposeImagesUrls(
+        slides: Slide[],
+        payload: { targetSlideId: string, objectsIds: string[] }
+    ): void {
+        slides.forEach(slide =>
+            slide.id === payload.targetSlideId
+            && slide.objects.filter(object =>
+                payload.objectsIds.find(objectId => objectId === object.id))
+                .forEach(
+                    object => { object.type === "image" && window.URL.revokeObjectURL(object.src) }
                 )
-    };
+        )
+    }
+
+    disposeImagesUrls(
+        slides,
+        {
+            targetSlideId: payload.slideId,
+            objectsIds: payload.removingObjectsIds
+        }
+    )
+    return slides.map(
+        slide => slide.id === payload.slideId
+            ? {
+                ...slide,
+                objects: slide.objects.filter(
+                    slideObj => !payload.removingObjectsIds.find(id => slideObj.id === id)
+                )
+            }
+            : slide
+    );
 }
 
 function addObjectToSlide(                    //одна функция под текст и картинку
-    presentation: Presentation, 
-    payload: {slideId: string, object: SlideObject}
-): Presentation{//собрать текст снаружи
-    console.log(presentation);
-    console.log(payload);
-    return {
-        ...presentation,
-        slides: presentation.slides.map(slide =>                 //говорящие названия в funcs
-                    slide.id == payload.slideId ?
-                        {
-                            ...slide,
-                            objects: 
-                                [
-                                    ...slide.objects,
-                                    payload.object
-                                ]
-                        } :
-                        slide
-                )
-    };
-}
+    slides: Slide[],
+    payload: { slideId: string, object: SlideObject }
+): Slide[] {
+    return slides.map(slide =>
+        slide.id == payload.slideId
+            ? {
+                ...slide,
+                objects:
+                    [
+                        ...slide.objects,
+                        payload.object
+                    ]
+            }
+            : slide
+    )
+};
 
 function moveSlideObject(
-    presentation: Presentation, 
-    payload: {slideId: string, objectId: string, props: Position}
-): Presentation{
-    return {
-        ...presentation,
-        slides: presentation.slides.map(slide => 
-                    slide.id == payload.slideId 
-                    ? {
-                            ...slide,
-                            objects: slide.objects.map(
-                                object => object.id == payload.objectId ? 
-                                {
-                                    ...object, 
-                                    position: {...payload.props}
-                                } :
-                                object
-                            )    
+    slides: Slide[],
+    payload: { slideId: string, objectIds: string[], changes: Position }
+): Slide[] {
+    return slides.map(slide =>
+        slide.id === payload.slideId
+            ? {
+                ...slide,
+                objects: slide.objects.map(
+                    object => payload.objectIds.some(id => id === object.id)
+                        ? {
+                            ...object,
+                            position: {
+                                x: object.position.x + payload.changes.x,
+                                y: object.position.y + payload.changes.y
+                            }
                         } :
-                        slide
+                        object
                 )
-    };
-}
+            }
+            : slide
+    )
+};
 
 function resizeSlideObject(
-    presentation: Presentation, 
-    payload: {slideId: string, objectId: string, props: Size}                 //Size obj in params
-): Presentation{
-    return {
-        ...presentation,
-        slides: presentation.slides.map(slide => 
-                    slide.id == payload.slideId ?
+    slides: Slide[],
+    payload: { slideId: string, objectId: string, changes: Size, isControlUpper: boolean, isControlLeft: boolean }                 //Size obj in params
+): Slide[] {
+    return slides.map(slide =>
+        slide.id == payload.slideId ?
+            {
+                ...slide,
+                objects: slide.objects.map(
+                    object => object.id === payload.objectId ?
                         {
-                            ...slide,
-                            objects: slide.objects.map(
-                                object => object.id == payload.objectId ? 
-                                {
-                                    ...object, 
-                                    size: {
-                                        ...payload.props
-                                    }
-                                } :
-                                object
-                            )    
+                            ...object,
+                            position: {
+                                x: payload.isControlLeft
+                                    ? object.position.x - payload.changes.width / 2
+                                    : object.position.x + payload.changes.width / 2,
+                                y: payload.isControlUpper
+                                    ? object.position.y - payload.changes.height / 2
+                                    : object.position.y + payload.changes.height / 2,
+                            },
+                            size: {
+                                width: object.size.width + payload.changes.width,
+                                height: object.size.height + payload.changes.height,
+                            }
                         } :
-                        slide
+                        object
                 )
-    };
-}
+            } :
+            slide
+    )
+};
 
 function editText(
-    presentation: Presentation, 
-    payload: {slideId: string, objectId: string, value: string}
-): Presentation{
-    return {
-        ...presentation,
-        slides: presentation.slides.map(slide => 
-                    slide.id == payload.slideId ?
-                        {
-                            ...slide,
-                            objects: slide.objects.map(
-                                object => object.id == payload.objectId 
-                                ? {
-                                    ...object, 
-                                    content: payload.value
-                                } 
-                                : object
-                            )    
-                        } :
-                        slide
+    slides: Slide[],
+    payload: { slideId: string, objectId: string, value: string }
+): Slide[] {
+    return slides.map(slide =>
+        slide.id == payload.slideId ?
+            {
+                ...slide,
+                objects: slide.objects.map(
+                    object => object.id == payload.objectId
+                        ? {
+                            ...object,
+                            content: payload.value
+                        }
+                        : object
                 )
-    };
-}
+            } :
+            slide
+    )
+};
+
 
 function editFontFamily(
-    presentation: Presentation, 
-    payload: {slideId: string, objectId: string, value: string}
-): Presentation{
-    return {
-        ...presentation,
-        slides: presentation.slides.map(slide => 
-                    slide.id == payload.slideId ?
+    slides: Slide[],
+    payload: { slideId: string, objectId: string, value: string }
+): Slide[] {
+    return slides.map(slide =>
+        slide.id == payload.slideId ?
+            {
+                ...slide,
+                objects: slide.objects.map(
+                    object => object.id == payload.objectId && object.type == "text" ?
                         {
-                            ...slide,
-                            objects: slide.objects.map(
-                                object => object.id == payload.objectId && object.type == "text"? 
-                                {
-                                    ...object, 
-                                    font: {
-                                        fontFamily: payload.value,
-                                        fontSize: object.font.fontSize,
-                                    }
-                                } :
-                                object
-                            )    
+                            ...object,
+                            font: {
+                                fontFamily: payload.value,
+                                fontSize: object.font.fontSize,
+                            }
                         } :
-                        slide
+                        object
                 )
-    };
-}
+            } :
+            slide
+    )
+};
+
 
 function editFontSize(
-    presentation: Presentation, 
-    payload: {slideId: string, objectId: string, value: number}
-): Presentation{
-    return {
-        ...presentation,
-        slides: presentation.slides.map(slide => 
-            slide.id == payload.slideId 
+    slides: Slide[],
+    payload: { slideId: string, objectId: string, value: number }
+): Slide[] {
+    return slides.map(slide =>
+        slide.id == payload.slideId
             ? {
                 ...slide,
                 objects: slide.objects.map(
                     object => object.id == payload.objectId && object.type == "text"
-                    ? {
-                        ...object, 
-                        font: {
-                            fontFamily: object.font.fontFamily,
-                            fontSize: payload.value,
+                        ? {
+                            ...object,
+                            font: {
+                                fontFamily: object.font.fontFamily,
+                                fontSize: payload.value,
+                            }
                         }
-                    } 
-                    : object
-                )    
-            } 
+                        : object
+                )
+            }
             : slide
-        )
-    };
-}
+    )
+};
 
 function editBackground(
-    presentation: Presentation,
-    payload: {slideId: string, bg: Background}
-): Presentation{
-    return{
-        ...presentation,
-        slides: presentation.slides.map(slide => 
-            slide.id === payload.slideId 
-                ? {
-                    ...slide,
-                    background: payload.bg
-                }       
-                : slide
-        )
-    };
-}
-
-function disposeImagesUrls(presentation: Presentation, payload: { targetSlideId: string, objectsIds: string[] }) {
-    presentation.slides.map(slide =>  
-        slide.id === payload.targetSlideId
-            ? slide.objects.filter(object => 
-                payload.objectsIds.find(objectId => objectId === object.id))
-                .map(object => { object.type === "image" ? window.URL.revokeObjectURL(object.src) : null})
-            : null
+    slides: Slide[],
+    payload: { slideId: string, bg: Background }
+): Slide[] {
+    return slides.map(slide =>
+        slide.id === payload.slideId
+            ? {
+                ...slide,
+                background: payload.bg
+            }
+            : slide
     )
-}
+};
 
-function createSlide(payload: {id: string}): Slide {
+function createSlide(payload: { id: string }): Slide {
     return {
         id: payload.id,
         header: "New slide",
@@ -252,7 +238,7 @@ function createSlide(payload: {id: string}): Slide {
     };
 }
 
-function createPresentation(): Presentation { 
+function createPresentation(): Presentation {
     return {
         slides: [],
         name: "Unnamed1"
@@ -290,7 +276,6 @@ function createImageObject(payload: { id: string, position: Position, src: strin
 }
 
 export {
-    renamePresentation,
     removeObjectsFromSlide,
     removeSlide,
     resizeSlideObject,
@@ -305,7 +290,6 @@ export {
     createSlide,
     verify,
     createPresentation,
-    disposeImagesUrls,
     createImageObject,
     createTextObject
 }

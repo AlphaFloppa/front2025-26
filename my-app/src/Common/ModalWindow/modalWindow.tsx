@@ -1,44 +1,51 @@
-import { useContext } from "react";
-import { dispatchPresentation, editor } from "../../Store/Model/editor";
-import { editBackground } from "../../Store/Services/editFunctions";
-import { ModalWindowContext } from "../../Original/App/App";
-import { ColorPicker } from "../ColorPicker/colorPicker";
+import { useEffect, useRef } from "react";
+import { ColorPickerWindow } from "../ColorPickerWindow/ColorPickerWindow";
+import style from "./modalWindow.module.css";
+import { useModalWindow } from "./ModalWindow.hooks";
 
 
 type ModalWindowProps = {
-    destination: "colorpicker" | "others"
-}
+    destination: "colorpicker",
+    onApply: Function,
+    onCancel: Function
+};                                
 
-function ModalWindow({ destination }: ModalWindowProps) { 
-    switch(destination){ 
-        case "colorpicker": { 
-            const turnMWOff = () => { useContext(ModalWindowContext)(false) };
-            const applyHandler = (colorCode: string) => {
-                dispatchPresentation(
-                    () => editBackground(
-                        editor.presentation,
-                        {
-                            slideId: editor.selection.selectedSlides[0],
-                            bg: {
-                                type: "color",
-                                code: colorCode
+function ModalWindow({ destination, onApply, onCancel }: ModalWindowProps) {
+    const { disableMW } = useModalWindow();
+    switch (destination) {
+        case "colorpicker": {
+            const dialogDOMNodeRef = useRef<HTMLDialogElement | null>(null);
+            useEffect(
+                () => {
+                    dialogDOMNodeRef.current?.showModal();
+                }
+            )
+            return (
+                <dialog
+                    className={style.dialog}
+                    ref={dialogDOMNodeRef}
+                >
+                    <ColorPickerWindow
+                        applyHandler={
+                            (colorCode: string) => {
+                                onApply(colorCode);
+                                disableMW();
+                            }}
+                        cancelHandler={
+                            (colorCode: string) => {
+                                onCancel(colorCode);
+                                disableMW();
                             }
                         }
-                    ));
-                turnMWOff();
-            };
-            const cancelHandler = turnMWOff;
-            return (
-                <dialog>
-                    <ColorPicker
-                        applyHandler={applyHandler}
-                        cancelHandler={cancelHandler}
                     />
                 </dialog>
             )
         }
-        default: 
-           return (<></>)
+        default:
+            {
+                console.warn("вызвано другое модальное окно, не colorPicker");
+                return (<></>);
+            }
     }
 }
 
