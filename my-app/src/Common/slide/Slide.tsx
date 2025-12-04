@@ -7,7 +7,6 @@ import { verify } from "../../Store/Services/editFunctions";
 import style from "../slide/Slide.module.css"
 import { type Position } from "../../Store/Model/slideContent";
 import { useEditor } from "../../hooks/editor.hooks";
-import { useContextMenu } from "../ContextMenu/ContextMenu.hooks";
 import { useDnd, type dragHandlerArgs, type finishHandlerArgs, type startHandlerArgs } from "../../hooks/dnd.hooks";
 
 type SlideProps = {
@@ -28,15 +27,12 @@ const getClickRelativePositionAtSlide = (     //определяет относ�
 
 function Slide({ slide, eventHandlers: { click, contextMenu } }: SlideProps) {
     const {
-        state: {
-            selection: { selectedSlideObjects: selectedSlideObjectsIds }
-        },
-        nullifySlideObjectsSelection,
-        dispatchObjectsMoving
+        useSelector,
+        useDispatch
     } = useEditor();
-
+    const { nullifySlideObjectSelection, moveSlideObjects, disableContextMenu } = useDispatch();
+    const selectedSlideObjectsIds = useSelector(state => state.selection.selectedSlideObjects);
     const slideDOMNodeRef = useRef<HTMLDivElement | null>(null);
-
     const startHandler = useCallback(
         (
             {
@@ -44,9 +40,7 @@ function Slide({ slide, eventHandlers: { click, contextMenu } }: SlideProps) {
             }: startHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
         ) => {
             if (slideObjectRef.current) {
-                console.log(slideObjectStyle);
-                slideObjectRef.current.classList.add(slideObjectStyle.dragging);            //TODO: не работает накидывание иногда
-                slideObjectRef.current.style.willChange = "transform";
+                slideObjectRef.current.classList.add(slideObjectStyle.dragging);        
                 slideObjectRef.current.style.setProperty("--DnDDragOffsetX", `0px`);
                 slideObjectRef.current.style.setProperty("--DnDDragOffsetY", `0px`);
             }
@@ -87,7 +81,6 @@ function Slide({ slide, eventHandlers: { click, contextMenu } }: SlideProps) {
                 slideObjectRef => {
                     if (slideObjectRef.current) {
                         slideObjectRef.current.classList.remove(slideObjectStyle.dragging);
-                        slideObjectRef.current.style.willChange = "auto";
                         slideObjectRef.current.style.setProperty("--DnDDragOffsetX", `0px`);
                         slideObjectRef.current.style.setProperty("--DnDDragOffsetY", `0px`);
                     }
@@ -98,15 +91,16 @@ function Slide({ slide, eventHandlers: { click, contextMenu } }: SlideProps) {
                 x: relativeXOffset,
                 y: relativeYOffset
             } = getClickRelativePositionAtSlide({ offsetX, offsetY }, verify(slideRef.current));
-            dispatchObjectsMoving(
+            moveSlideObjects(
+                slide.id,
+                selectedSlideObjectsIds,
                 {
-                    relativeXOffset,
-                    relativeYOffset,
-                    targetObjectsIds: selectedSlideObjectsIds
+                    x: relativeXOffset,
+                    y: relativeYOffset
                 }
             );
         },
-        [dispatchObjectsMoving]
+        [selectedSlideObjectsIds]
     );
 
     const { listenerEffect } = useDnd(
@@ -148,7 +142,6 @@ function Slide({ slide, eventHandlers: { click, contextMenu } }: SlideProps) {
         }
     )
 
-    const { turnOff: disableCM } = useContextMenu();
     return (
         <div
             ref={slideDOMNodeRef}
@@ -162,10 +155,10 @@ function Slide({ slide, eventHandlers: { click, contextMenu } }: SlideProps) {
             style={setCssProps(slide)}
             onClick={
                 (e) => {
-                    disableCM();
+                    disableContextMenu();
                     //отключение всех контекстных меню вне зависимости от точки нажатия
                     if (e.target === e.currentTarget) {       //обнуляем все выделения объектов при нажатии конкретно на область слайда
-                        nullifySlideObjectsSelection();         // но не объекта
+                        nullifySlideObjectSelection();         // но не объекта
                     }
                     if (click) {
                         click(e);
@@ -176,7 +169,7 @@ function Slide({ slide, eventHandlers: { click, contextMenu } }: SlideProps) {
                 (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    disableCM();
+                    disableContextMenu();
                     if (contextMenu) {
                         contextMenu(e);
                     };

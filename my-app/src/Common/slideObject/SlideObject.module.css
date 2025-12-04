@@ -35,7 +35,8 @@
 }
 
 .dragging{
-   outline: 10px solid red;
+   outline: 10px solid red !important;
+   will-change: transform;
 }
 
 .focusable.selected {

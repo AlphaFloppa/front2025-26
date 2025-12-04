@@ -1,8 +1,9 @@
 import * as Services from "../../Services/editFunctions";
 import type { Action } from "../store";
 import type { Slide } from "../../Model/slide";
+import { presentation } from "../../Services/data/generalData";
 
-const slides: Slide[] = [];
+const slides: Slide[] = presentation.slides;
 
 const slideReducer = (state = slides, { type, payload }: Action) => {
     switch (type) {

@@ -2,7 +2,7 @@ import { forwardRef, useRef } from "react";
 import type { SlideObject as SlideObjectType } from "../../Store/Model/slideContent";
 import style from "../slideObject/SlideObject.module.css";
 import controlsStyle from "./slideObjectControl.module.css";
-import { useContextMenu, useContextMenuTemplate } from "../ContextMenu/ContextMenu.hooks";
+import { useContextMenuTemplate } from "../ContextMenu/ContextMenu.hooks";
 import type React from "react";
 import { useEditor } from "../../hooks/editor.hooks";
 import { useResize } from "../../hooks/resize.hooks";
@@ -24,8 +24,11 @@ const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
             useDispatch,
             useSelector
         } = useEditor();
+        const { selectSlideObject, enableContextMenu, disableContextMenu } = useDispatch();
         const { createSlideObjectCM } = useContextMenuTemplate();
-        const { turnOn: enableCM, turnOff: disableCM, state: { isEnabled: isCMEnabled } } = useContextMenu();
+        const { isEnabled } = useSelector(state => state.contextMenu);
+        const { selectedSlides, selectedSlideObjects } = useSelector(state => state.selection);
+        const activeSlideId = selectedSlides[0];
 
         const LUControlDOMNodeRef = useRef<HTMLDivElement | null>(null);
         const LLControlDOMNodeRef = useRef<HTMLDivElement | null>(null);
@@ -63,7 +66,7 @@ const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
                     );
                     useDispatch().
                         resizeSlideObject(
-                            useSelector(state => state.selection).selectedSlides[0],
+                            activeSlideId,
                             object.id,
                             {
                                 width,
@@ -78,21 +81,20 @@ const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
             }
         );
 
-        const isSelected = useSelector(state => state.selection).selectedSlideObjects.some(selectedSlideObjectId => selectedSlideObjectId === object.id);
+        const isSelected = selectedSlideObjects.some(selectedSlideObjectId => selectedSlideObjectId === object.id);
 
-        const slideContextMenuHandler = (e: React.MouseEvent<HTMLDivElement>) => {
-            if (!useSelector(state => state.selection.selectedSlideObjects).find(            //если не выделен
-                selectedObjectId => selectedObjectId === object.id)
-            ) {
+        const slideObjectContextMenuHandler = (e: React.MouseEvent<HTMLDivElement>) => {
+            if (isSelected) {
                 return;
             }
             e.preventDefault();
             e.stopPropagation();
             const { clientX: x, clientY: y } = e;
-            enableCM(
+            enableContextMenu(
+                createSlideObjectCM([() => { disableContextMenu(); }]),
                 {
-                    position: { x, y },
-                    template: createSlideObjectCM([() => { disableCM(); }])
+                    x,
+                    y
                 }
             )
             contextMenuHandler?.();
@@ -117,14 +119,14 @@ const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
                             onClick={
                                 (e) => {
                                     e.stopPropagation();
-                                    disableCM();
-                                    useDispatch().selectSlideObject(object.id, e.ctrlKey);
+                                    disableContextMenu();
+                                    selectSlideObject(object.id, e.ctrlKey);
                                     //другая нагрузка
                                 }
                             }
                             onContextMenu={
-                                !isCMEnabled      //если не в превью и нет активного меню
-                                    ? slideContextMenuHandler
+                                !isEnabled      //если не в превью и нет активного меню
+                                    ? slideObjectContextMenuHandler
                                     : undefined
                             }
                             onMouseDown={
@@ -173,13 +175,13 @@ const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
                             onClick={
                                 (e) => {
                                     e.stopPropagation();
-                                    useDispatch().selectSlideObject(object.id, e.ctrlKey);
+                                    selectSlideObject(object.id, e.ctrlKey);
                                     //другая нагрузка
                                 }
                             }
                             onContextMenu={
-                                !isCMEnabled               //если не в превью и нет активного меню
-                                    ? slideContextMenuHandler
+                                !isEnabled               //если не в превью и нет активного меню
+                                    ? slideObjectContextMenuHandler
                                     : undefined
                             }
                             onMouseDown={

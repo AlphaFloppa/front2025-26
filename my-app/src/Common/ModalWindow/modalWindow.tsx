@@ -1,18 +1,16 @@
 import { useEffect, useRef } from "react";
 import { ColorPickerWindow } from "../ColorPickerWindow/ColorPickerWindow";
 import style from "./modalWindow.module.css";
-import { useModalWindow } from "./ModalWindow.hooks";
+import { useEditor } from "../../hooks/editor.hooks";            
 
-
-type ModalWindowProps = {
-    destination: "colorpicker",
-    onApply: Function,
-    onCancel: Function
-};                                
-
-function ModalWindow({ destination, onApply, onCancel }: ModalWindowProps) {
-    const { disableMW } = useModalWindow();
-    switch (destination) {
+function ModalWindow() {
+    const { useSelector, useDispatch } = useEditor();
+    const { isEnabled, type, onApply, onCancel } = useSelector(state => state.modalWindow);
+    const { disableModalWindow } = useDispatch();
+    if (!isEnabled) { 
+        return <></>
+    }
+    switch (type) {
         case "colorpicker": {
             const dialogDOMNodeRef = useRef<HTMLDialogElement | null>(null);
             useEffect(
@@ -28,13 +26,13 @@ function ModalWindow({ destination, onApply, onCancel }: ModalWindowProps) {
                     <ColorPickerWindow
                         applyHandler={
                             (colorCode: string) => {
-                                onApply(colorCode);
-                                disableMW();
-                            }}
+                                onApply?.(colorCode);
+                                disableModalWindow();
+                        }}
                         cancelHandler={
-                            (colorCode: string) => {
-                                onCancel(colorCode);
-                                disableMW();
+                            () => {
+                                onCancel?.();
+                                disableModalWindow();
                             }
                         }
                     />

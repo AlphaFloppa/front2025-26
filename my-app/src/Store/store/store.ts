@@ -2,10 +2,14 @@ import { bindActionCreators, combineReducers, createStore } from "redux";
 import { slideReducer } from "./reducers/slideReducers";
 import { presentationNameReducer } from "./reducers/presentationName";
 import { selectionReducer } from "./reducers/selectionReducers";
+import { ContextMenuReducer } from "./reducers/contextMenuReducer";
+import { ModalWindowReducer } from "./reducers/modalWindowReducer";
 import { useSelector, type TypedUseSelectorHook, useDispatch } from "react-redux";
 import * as TitleActionCreators from './action-creators/presentationName';
 import * as SlidesActionCreators from './action-creators/slide';
-import * as SelectionActionsCreators from "./action-creators/selection";
+import * as SelectionActionCreators from "./action-creators/selection";
+import * as ContextMenuActionCreators from "./action-creators/contextMenu";
+import * as ModalWindowActionCreators from "./action-creators/modalWindow";
 
 type Action = {
     type: string,
@@ -16,7 +20,9 @@ const finalReducer = combineReducers(
     {
         title: presentationNameReducer,
         slides: slideReducer,
-        selection: selectionReducer
+        selection: selectionReducer,
+        contextMenu: ContextMenuReducer,
+        modalWindow: ModalWindowReducer
     }
 );
 
@@ -32,7 +38,9 @@ const useAppActions = () => {
         {
             ...TitleActionCreators,
             ...SlidesActionCreators,
-            ...SelectionActionsCreators
+            ...SelectionActionCreators,
+            ...ContextMenuActionCreators,
+            ...ModalWindowActionCreators
         },
         dispatch
     )

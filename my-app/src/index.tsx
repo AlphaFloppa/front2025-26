@@ -4,7 +4,6 @@ import { App } from "./Original/App/App.tsx";
 import { verify } from "./Store/Services/editFunctions.ts";
 import { ContextMenuProvider } from "./Common/ContextMenu/ContextMenu.hooks.tsx";
 import { ModalWindowProvider } from "./Common/ModalWindow/ModalWindow.hooks.tsx";
-import { EditorProvider } from "./hooks/editor.hooks.tsx";
 import { Provider } from "react-redux";
 import { store } from "./Store/store/store.ts";
 
@@ -15,11 +14,7 @@ const root = createRoot(container);
 let render: Function = () => {
   root.render(
     <Provider store={store}>
-      <EditorProvider
-        users={
-          <ModalWindowProvider users={<ContextMenuProvider users={<App />} />} />
-        }
-      />
+      <ModalWindowProvider users={<ContextMenuProvider users={<App />} />} />
     </Provider>
   );
 };

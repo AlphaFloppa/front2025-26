@@ -143,6 +143,8 @@ const useDnd = <containerType extends HTMLElement | null, userType extends HTMLE
                 usersRefs
             }: addDndArgs<containerType, userType>
         ) => {
+            console.log(usersRefs);
+
             const MDlistenersArray = usersRefs.map(
                 userRef => ((e: MouseEvent) => {
                     mouseDownHandler(e, containerRef, userRef)
@@ -181,14 +183,14 @@ const useDnd = <containerType extends HTMLElement | null, userType extends HTMLE
                 containerRef.current?.removeEventListener("mouseup", MUlistener);
             }
         },
-        [isDragging]
+        [isDragging, mouseDownHandler, mouseMoveHandler, mouseUpHandler]
     );
 
-    useEffect(
+    /*useEffect(
         () => { 
-            //console.log(containerRef);
+            console.log(containerRef);
         }
-    )
+    )*/
 
     return {
         listenerEffect

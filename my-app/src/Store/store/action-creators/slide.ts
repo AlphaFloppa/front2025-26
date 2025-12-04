@@ -1,59 +1,59 @@
 import type { Background, Position, Size, SlideObject } from "../../Model/slideContent";
 
-const renameSlide = (id: string, newName: string) => ({
+const renameSlide = (slideId: string, newName: string) => ({
     type: "RENAME_SLIDE",
     payload: {
-        id,
+        id: slideId,
         newName
     }
 });
 
-const removeSlide = (id: string) => ({
+const removeSlide = (slideId: string) => ({
     type: "REMOVE_SLIDE",
     payload: {
-        id
+        id: slideId,
     }
 });
 
-const addSlide = (id: string, name: string) => ({
+const addSlide = (slideId: string, name: string) => ({
     type: "ADD_SLIDE",
     payload: {
-        id,
+        id: slideId,
         name
     }
 });
 
-//const replaceSlide = (id: string, )
+//const replaceSlide = (slideId: string, )
 
-const removeObjectsFromSlide = (id: string, removingObjectsIds: string[]) => ({
+const removeObjectsFromSlide = (slideId: string, removingObjectsIds: string[]) => ({
     type: 'REMOVE_OBJECTS_FROM_SLIDE',
     payload: {
-        id,
+        id: slideId,
         removingObjectsIds
     }
 });
 
-const addObjectToSlide = (object: SlideObject) => ({
+const addObjectToSlide = (slideId: string, object: SlideObject) => ({
     type: "ADD_OBJECT_TO_SLIDE",
     payload: {
-        id: object.id,
+        id: slideId,
         object
     }
 });
 
-const moveSlideObjects = (id: string, objectIds: string[], changes: Position) => ({
+const moveSlideObjects = (slideId: string, objectsIds: string[], changes: Position) => ({
     type: "MOVE_SLIDE_OBJECT",
     payload: {
-        id,
-        objectIds,
+        id: slideId,
+        objectsIds,
         changes
     }
 });
 
-const resizeSlideObject = (id: string, objectId: string, changes: Size, isControlLeft: boolean, isControlUpper: boolean) => ({
+const resizeSlideObject = (slideId: string, objectId: string, changes: Size, isControlLeft: boolean, isControlUpper: boolean) => ({
     type: "RESIZE_SIDE_OBJECT",
     payload: {
-        id,
+        id: slideId,
         objectId,
         changes,
         isControlLeft,
@@ -61,37 +61,37 @@ const resizeSlideObject = (id: string, objectId: string, changes: Size, isContro
     }
 });
 
-const editText = (id: string, objectId: string, newText: string) => ({
+const editText = (slideId: string, objectId: string, newText: string) => ({
     type: "EDIT_TEXT",
     payload: {
-        id,
+        id: slideId,
         objectId,
         newText
     }
 });
 
-const editFontFamily = (id: string, objectId: string, newFontFamily: string) => ({
+const editFontFamily = (slideId: string, objectId: string, newFontFamily: string) => ({
     type: "EDIT_FONT_FAMILY",
     payload: {
-        id,
+        id: slideId,
         objectId,
         newFontFamily
     }
 });
 
-const editFontSize = (id: string, objectId: string, newFontSize: number) => ({
+const editFontSize = (slideId: string, objectId: string, newFontSize: number) => ({
     type: "EDIT_FONT_SIZE",
     payload: {
-        id,
+        id: slideId,
         objectId,
         newFontSize
     }
 });
 
-const editBackground = (id: string, newBackground: Background) => ({
+const editBackground = (slideId: string, newBackground: Background) => ({
     type: "EDIT_BG",
     payload: {
-        id,
+        id: slideId,
         newBackground
     }
 });

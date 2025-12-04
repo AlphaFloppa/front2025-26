@@ -8,8 +8,10 @@ type SlideObjectProps = {
 }
 
 const SlideObject = ({ object }: SlideObjectProps) => {
-    const { state: { selection: { selectedSlideObjects } } } = useEditor();
-    const isSelected = selectedSlideObjects.some(selectedSlideObjectId => selectedSlideObjectId === object.id);
+    const { useSelector } = useEditor();
+    const isSelected = useSelector(state => state.selection.selectedSlideObjects).some(
+        selectedSlideObjectId => selectedSlideObjectId === object.id
+    );
     return (
         <>
             {
