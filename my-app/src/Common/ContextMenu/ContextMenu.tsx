@@ -17,7 +17,7 @@ const definePosition = (position: Position): CSSProperties =>
 
 const ContextMenu = () => {
     const { useSelector } = useEditor();
-    const { isEnabled, template, position } = useSelector(state => state.contextMenu);
+    const { isEnabled, template, position, positionAtSlide } = useSelector(state => state.contextMenu);
     let inputRef = useRef(null);
     let storage = useRef("");               //а нужен ли вообще storage
     let [isInputRefEnabled, setIsInputRefEnabled] = useState(false);            //отказаться от этого механизма
@@ -39,8 +39,10 @@ const ContextMenu = () => {
             }>
             {
                 verify(template).options.map(
-                    ({ name, clickHandler, isForUpload }) =>
-                        <span className={style.option}
+                    ({ name, clickHandler, isForUpload }, index) =>
+                        <span
+                            key={index}
+                            className={style.option}
                             onClick={
                                 isForUpload
                                     ? (isInputRefEnabled
@@ -54,7 +56,7 @@ const ContextMenu = () => {
                                         : () => { })
                                     : (e) => {
                                         e.stopPropagation();
-                                        clickHandler(e);
+                                        clickHandler(positionAtSlide);
                                     }
                             }
                         >
@@ -70,7 +72,8 @@ const ContextMenu = () => {
                                         (e) => {
                                             const importedFile = verify(e.currentTarget.files)[0];
                                             storage.current = fileToUrl(importedFile);
-                                            clickHandler(storage.current);
+                                            clickHandler(position, storage.current);
+                                            //TODO: get rid of storage
                                             //запись в useRef опции
                                         }}
                                 />

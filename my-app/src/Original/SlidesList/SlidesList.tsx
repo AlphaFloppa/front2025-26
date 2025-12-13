@@ -1,7 +1,8 @@
 import type { Slide as SlideType } from "../../Store/Model/slide"
 import { LiteSlide as Slide } from "../../Common/slide/previewSlide/Slide";
 import style from "./SlidesList.module.css";
-import { useContextMenu, useContextMenuTemplate } from "../../Common/ContextMenu/ContextMenu.hooks";
+import { useContextMenuTemplate } from "../../Common/ContextMenu/ContextMenu.hooks";
+import { useEditor } from "../../hooks/editor.hooks";
 
 type SlidesListProps = {
     list: SlideType[],
@@ -10,19 +11,18 @@ type SlidesListProps = {
 }
 
 function SlidesList({ list }: SlidesListProps) {
+    const { useDispatch } = useEditor();
     const { createSlideListCM } = useContextMenuTemplate();
-    const { turnOn: enableCM, turnOff: disableCM} = useContextMenu();
+    const { enableContextMenu, disableContextMenu } = useDispatch();
     const slideContextMenuHandler = (                       //сборка вне и прокидывание в пропсах
         e: React.MouseEvent<HTMLDivElement>,
         slide: SlideType
     ) => {
         const { clientX: x, clientY: y } = e;
         e.preventDefault();
-        enableCM(
-            {
-                position: {x, y},
-                template: createSlideListCM([() => { disableCM(); }], slide)
-            }
+        enableContextMenu(
+            createSlideListCM([() => { disableContextMenu(); }], slide),
+            { x, y }
         )
     };
     return (

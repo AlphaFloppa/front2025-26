@@ -3,7 +3,8 @@
    --DnDDragOffsetX: 0px;
    --DnDDragOffsetY: 0px;
    position: absolute;
-   inset: var(--definedPosition);
+   left: calc(var(--definedPositionX) * var(--k));
+   top: calc(var(--definedPositionY) * var(--k));
    width: var(--definedWidth);
    height: var(--definedHeight);
    outline: 3px dashed green;

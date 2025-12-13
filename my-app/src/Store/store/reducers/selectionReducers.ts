@@ -1,8 +1,9 @@
 import type { Action } from "../store";
 import type { Selection } from "../../Model/selection";
+import { presentation } from "../../Services/data/generalData";
 
 const selection: Selection = {
-    selectedSlides: Array<string>(),
+    selectedSlides: Array<string>(presentation.slides[0].id),
     selectedSlideObjects: Array<string>()
 }
 
@@ -34,6 +35,8 @@ const selectionReducer = (state = selection, { type, payload }: Action): Selecti
                 ...state,
                 selectedSlideObjects: []
             };
+        case "SET_STATE":
+            return payload.state.selection
     }
     return state;
 }

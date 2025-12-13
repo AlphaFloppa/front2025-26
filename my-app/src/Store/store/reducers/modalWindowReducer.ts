@@ -30,5 +30,6 @@ const ModalWindowReducer = (state = initialState, { type, payload }: Action): Mo
 };
 
 export { 
-    ModalWindowReducer
+    ModalWindowReducer,
+    type ModalWindowState
 }

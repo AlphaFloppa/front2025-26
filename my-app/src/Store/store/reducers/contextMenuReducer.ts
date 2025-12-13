@@ -5,7 +5,8 @@ import type { Action } from "../store";
 type ContextMenuState = {
     isEnabled: boolean,
     template?: ContextMenu,
-    position?: Position
+    position?: Position,
+    positionAtSlide?: Position
 }
 
 const initialState: ContextMenuState = {
@@ -20,7 +21,8 @@ const ContextMenuReducer = (state = initialState, { type, payload }: Action): Co
                 : {
                     isEnabled: true,
                     template: payload.template,
-                    position: payload.position
+                    position: payload.position,
+                    positionAtSlide: payload.positionAtSlide
                 }
         case "DISABLE_CONTEXT_MENU":
             return {
@@ -32,5 +34,6 @@ const ContextMenuReducer = (state = initialState, { type, payload }: Action): Co
 };
 
 export {
-    ContextMenuReducer
+    ContextMenuReducer,
+    type ContextMenuState
 }

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useCallback } from "react";
 import type { Position } from "../Store/Model/slideContent";
 /*
 onMouseDown накидывается на subjects,
@@ -67,7 +67,9 @@ const useDnd = <containerType extends HTMLElement | null, userType extends HTMLE
             containerRef: React.RefObject<containerType>,
             userRef: React.RefObject<userType>
         ) => {
-
+            if (e.button !== 0) {
+                return;
+            }
             e.stopPropagation();
             const { clientX, clientY } = e;
             setIsDragging(true);
@@ -143,7 +145,6 @@ const useDnd = <containerType extends HTMLElement | null, userType extends HTMLE
                 usersRefs
             }: addDndArgs<containerType, userType>
         ) => {
-            console.log(usersRefs);
 
             const MDlistenersArray = usersRefs.map(
                 userRef => ((e: MouseEvent) => {

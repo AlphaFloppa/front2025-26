@@ -7,17 +7,19 @@ function ModalWindow() {
     const { useSelector, useDispatch } = useEditor();
     const { isEnabled, type, onApply, onCancel } = useSelector(state => state.modalWindow);
     const { disableModalWindow } = useDispatch();
+    const dialogDOMNodeRef = useRef<HTMLDialogElement | null>(null);
+    useEffect(
+        () => {
+            if (isEnabled) { 
+                dialogDOMNodeRef.current?.showModal();
+            }
+        }
+    )
     if (!isEnabled) { 
         return <></>
     }
     switch (type) {
         case "colorpicker": {
-            const dialogDOMNodeRef = useRef<HTMLDialogElement | null>(null);
-            useEffect(
-                () => {
-                    dialogDOMNodeRef.current?.showModal();
-                }
-            )
             return (
                 <dialog
                     className={style.dialog}

@@ -6,29 +6,34 @@ import { useContextMenuTemplate } from "../ContextMenu/ContextMenu.hooks";
 import type React from "react";
 import { useEditor } from "../../hooks/editor.hooks";
 import { useResize } from "../../hooks/resize.hooks";
-import { getClickRelativePositionAtSlide } from "../slide/Slide";
-import { setObjectProps } from "./slideObject.styles";
+import { useStyle } from "./slideObject.styles";
 
 type SlideObjectProps = {
     object: SlideObjectType,
     containerRef: React.RefObject<HTMLDivElement | null>,
-    eventHandlers: {
+    eventHandlers?: {
         mouseDownHandler?: Function,
         contextMenuHandler?: Function
     }
 }
 
 const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
-    ({ object, eventHandlers: { mouseDownHandler, contextMenuHandler }, containerRef }: SlideObjectProps, ref) => {
+    ({ object, containerRef }: SlideObjectProps, ref) => {
         const {
             useDispatch,
             useSelector
         } = useEditor();
-        const { selectSlideObject, enableContextMenu, disableContextMenu } = useDispatch();
+        const { selectSlideObject, enableContextMenu, disableContextMenu, resizeSlideObject } = useDispatch();
         const { createSlideObjectCM } = useContextMenuTemplate();
         const { isEnabled } = useSelector(state => state.contextMenu);
         const { selectedSlides, selectedSlideObjects } = useSelector(state => state.selection);
         const activeSlideId = selectedSlides[0];
+        const objectDOMNodeRef = useRef<HTMLTextAreaElement | HTMLDivElement | null>(null);
+        useStyle(
+            object,
+            objectDOMNodeRef,
+            containerRef
+        );
 
         const LUControlDOMNodeRef = useRef<HTMLDivElement | null>(null);
         const LLControlDOMNodeRef = useRef<HTMLDivElement | null>(null);
@@ -57,24 +62,16 @@ const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
                     { deltaWidth, deltaHeight, isControlUpper, isControlLeft }:
                         { deltaWidth: number, deltaHeight: number, isControlUpper: boolean, isControlLeft: boolean }
                 ) => {
-                    const { x: width, y: height } = getClickRelativePositionAtSlide(
+                    resizeSlideObject(
+                        activeSlideId,
+                        object.id,
                         {
-                            offsetX: deltaWidth,
-                            offsetY: deltaHeight
+                            width: deltaWidth,
+                            height: deltaHeight
                         },
-                        containerRef.current
-                    );
-                    useDispatch().
-                        resizeSlideObject(
-                            activeSlideId,
-                            object.id,
-                            {
-                                width,
-                                height
-                            },
-                            isControlUpper,
-                            isControlLeft
-                        )
+                        isControlUpper,
+                        isControlLeft
+                    )
                 },
                 onStart: () => { },
                 onFinish: () => { }
@@ -84,20 +81,20 @@ const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
         const isSelected = selectedSlideObjects.some(selectedSlideObjectId => selectedSlideObjectId === object.id);
 
         const slideObjectContextMenuHandler = (e: React.MouseEvent<HTMLDivElement>) => {
-            if (isSelected) {
+            if (!isSelected || isEnabled) {
                 return;
             }
             e.preventDefault();
             e.stopPropagation();
             const { clientX: x, clientY: y } = e;
             enableContextMenu(
-                createSlideObjectCM([() => { disableContextMenu(); }]),
+                createSlideObjectCM(),
                 {
                     x,
                     y
-                }
+                },
+                undefined
             )
-            contextMenuHandler?.();
         };
 
         return (
@@ -107,6 +104,7 @@ const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
                         <div
                             ref={
                                 (node) => {
+                                    objectDOMNodeRef.current = node;
                                     if (ref) {
                                         if (typeof ref !== "function") {
                                             ref.current = node;
@@ -115,7 +113,6 @@ const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
                                 }
                             }
                             className={`${style.textWrapper} ${style.focusable} ${isSelected ? style.selected : null}`}
-                            style={setObjectProps(object)}
                             onClick={
                                 (e) => {
                                     e.stopPropagation();
@@ -124,17 +121,7 @@ const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
                                     //другая нагрузка
                                 }
                             }
-                            onContextMenu={
-                                !isEnabled      //если не в превью и нет активного меню
-                                    ? slideObjectContextMenuHandler
-                                    : undefined
-                            }
-                            onMouseDown={
-                                (e) => {
-                                    e.preventDefault();
-                                    mouseDownHandler?.(e);
-                                }
-                            }
+                            onContextMenu={slideObjectContextMenuHandler}
                         >
                             {
                                 isSelected &&
@@ -148,7 +135,7 @@ const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
                                 )
                             }
                             <textarea
-                                readOnly={true}
+                                readOnly
                                 tabIndex={0}
                                 className={style.text}
                                 onChange={() => { }}
@@ -162,6 +149,7 @@ const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
                         <div
                             ref={
                                 (node) => {
+                                    objectDOMNodeRef.current = node;
                                     if (ref) {
                                         if (typeof ref !== "function") {
                                             ref.current = node;
@@ -171,7 +159,6 @@ const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
                             }
                             tabIndex={0}
                             className={`${style.image} ${style.focusable} ${isSelected ? style.selected : null}`}
-                            style={setObjectProps(object)}
                             onClick={
                                 (e) => {
                                     e.stopPropagation();
@@ -179,17 +166,7 @@ const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
                                     //другая нагрузка
                                 }
                             }
-                            onContextMenu={
-                                !isEnabled               //если не в превью и нет активного меню
-                                    ? slideObjectContextMenuHandler
-                                    : undefined
-                            }
-                            onMouseDown={
-                                (e) => {
-                                    e.preventDefault();
-                                    mouseDownHandler?.(e);
-                                }
-                            }
+                            onContextMenu={slideObjectContextMenuHandler}
                         >
                             {
                                 isSelected &&

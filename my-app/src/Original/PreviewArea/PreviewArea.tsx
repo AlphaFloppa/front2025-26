@@ -13,7 +13,7 @@ type PreviewAreaProps = {
 }
 
 function PreviewArea(
-    { presentation: { name, slides}, eventHandlers}: PreviewAreaProps
+    { presentation: { name, slides }, eventHandlers}: PreviewAreaProps
 ) {
     return (
         <div className={style.previewArea}>

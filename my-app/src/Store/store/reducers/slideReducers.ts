@@ -5,7 +5,7 @@ import { presentation } from "../../Services/data/generalData";
 
 const slides: Slide[] = presentation.slides;
 
-const slideReducer = (state = slides, { type, payload }: Action) => {
+const slideReducer = (state = slides, { type, payload }: Action): Slide[] => {
     switch (type) {
         case "ADD_SLIDE":
             return Services.addSlide(
@@ -31,7 +31,7 @@ const slideReducer = (state = slides, { type, payload }: Action) => {
             return Services.addObjectToSlide(
                 state,
                 {
-                    slideId: payload.id,
+                    slideId: payload.slideId,
                     object: payload.object
                 }
             );
@@ -90,6 +90,8 @@ const slideReducer = (state = slides, { type, payload }: Action) => {
                     bg: payload.newBackground
                 }
             );
+        case "SET_STATE":
+            return payload.state.slides
     }
     return state;
 }

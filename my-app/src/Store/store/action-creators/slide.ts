@@ -36,7 +36,7 @@ const removeObjectsFromSlide = (slideId: string, removingObjectsIds: string[]) =
 const addObjectToSlide = (slideId: string, object: SlideObject) => ({
     type: "ADD_OBJECT_TO_SLIDE",
     payload: {
-        id: slideId,
+        slideId,
         object
     }
 });

@@ -2,8 +2,8 @@ import { useCallback, useMemo } from "react";
 import type { ContextMenu } from "../../Store/Model/contextMenu";
 import type { Slide } from "../../Store/Model/slide";
 import { useEditor } from "../../hooks/editor.hooks";
-import { getClickRelativePositionAtSlide } from "../slide/Slide";
 import * as Services from "../../Store/Services/editFunctions"
+import type { Position } from "../../Store/Model/slideContent";
 
 type useContextMenuTemplateResult = {
     createWorkplaceSlideCM: (additionalClickHandlersArray?: Function[] | undefined, payload?: any) => ContextMenu;
@@ -18,7 +18,8 @@ const useContextMenuTemplate = (): useContextMenuTemplateResult => {
         removeSlide,
         removeObjectsFromSlide,
         enableModalWindow,
-        editBackground
+        editBackground,
+        disableContextMenu
     } = useDispatch();
     const { selectedSlides, selectedSlideObjects } = useSelector(state => state.selection);
     const activeSlideId = selectedSlides[0];
@@ -40,51 +41,39 @@ const useContextMenuTemplate = (): useContextMenuTemplateResult => {
                                 )
                             },
                             () => { }
-                        )
-                    },                
+                        );
+                        disableContextMenu();
+                    },
                 },
                 {
                     name: "Создать текст",
-                    clickHandler: ({ nativeEvent: { offsetX, offsetY }, ...e }: React.MouseEvent<HTMLDivElement>) => {                //принимает event ПКМ по слайду
-                        const target = e.target as HTMLDivElement;
+                    clickHandler: (position: Position) => {                //принимает event ПКМ по слайду
                         addObjectToSlide(
                             activeSlideId,
                             Services.createTextObject(
                                 {
                                     id: Date.now().toString(),
-                                    position: getClickRelativePositionAtSlide(
-                                        {
-                                            offsetX,
-                                            offsetY
-                                        },
-                                        target
-                                    )
+                                    position
                                 }
-
                             )
-                        )
+                        );
+                        disableContextMenu();
                     }
                 },
                 {
                     name: "Импортировать изображение",
-                    clickHandler: ({ nativeEvent: { offsetX, offsetY }, ...e }: React.MouseEvent<HTMLDivElement>, uploadedImageUrl: string) => {    //принимает event ПКМ по слайду
-                        const target = e.target as HTMLDivElement;
+                    clickHandler: (position: Position, uploadedImageUrl: string) => {   
                         addObjectToSlide(
                             activeSlideId,
                             Services.createImageObject(
                                 {
                                     id: Date.now().toString(),
-                                    position: getClickRelativePositionAtSlide(
-                                        {
-                                            offsetX,
-                                            offsetY
-                                        },
-                                        target
-                                    ),
+                                    position,
                                     src: uploadedImageUrl
                                 },
                             )
-                        )
+                        );
+                        disableContextMenu();
                     },
                     isForUpload: true
                 }
@@ -102,7 +91,8 @@ const useContextMenuTemplate = (): useContextMenuTemplateResult => {
                         removeObjectsFromSlide(
                             activeSlideId,
                             selectedSlideObjects
-                        )
+                        );
+                        disableContextMenu();
                     }
                 }
             ]
@@ -118,7 +108,8 @@ const useContextMenuTemplate = (): useContextMenuTemplateResult => {
                     clickHandler: ({ id: slideId }: Slide) => {
                         removeSlide(
                             slideId
-                        )
+                        );
+                        disableContextMenu();
                     }
                 }
             ]
