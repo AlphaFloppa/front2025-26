@@ -111,7 +111,7 @@ function moveSlideObject(
 
 function resizeSlideObject(
     slides: Slide[],
-    payload: { slideId: string, objectId: string, changes: Size, isControlUpper: boolean, isControlLeft: boolean }                 //Size obj in params
+    payload: { slideId: string, objectId: string, sizeChanges: Size, positionChanges: Position}                 //Size obj in params
 ): Slide[] {
     return slides.map(slide =>
         slide.id == payload.slideId ?
@@ -122,16 +122,12 @@ function resizeSlideObject(
                         {
                             ...object,
                             position: {
-                                x: payload.isControlLeft
-                                    ? object.position.x - payload.changes.width / 2
-                                    : object.position.x + payload.changes.width / 2,
-                                y: payload.isControlUpper
-                                    ? object.position.y - payload.changes.height / 2
-                                    : object.position.y + payload.changes.height / 2,
+                                x: object.position.x + payload.positionChanges.x,
+                                y: object.position.y + payload.positionChanges.y
                             },
                             size: {
-                                width: object.size.width + payload.changes.width,
-                                height: object.size.height + payload.changes.height,
+                                width: object.size.width + payload.sizeChanges.width,
+                                height: object.size.height + payload.sizeChanges.height,
                             }
                         } :
                         object

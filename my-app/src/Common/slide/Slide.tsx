@@ -88,6 +88,7 @@ function Slide({ slide }: SlideProps) {
                 userRef: slideObjectRef
             }: startHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
         ) => {
+            console.debug(slideObjectRef);
             if (slideObjectRef.current) {
                 slideObjectRef.current.classList.add(slideObjectStyle.dragging);
                 slideObjectRef.current.style.setProperty("--DnDDragOffsetX", `0px`);
@@ -105,6 +106,7 @@ function Slide({ slide }: SlideProps) {
                 usersRefs: slideObjectRefs
             }: dragHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
         ) => {
+            console.info(...slideObjectRefs);
             slideObjectRefs.forEach(
                 slideObjectRef => {
                     if (slideObjectRef.current) {
@@ -134,6 +136,10 @@ function Slide({ slide }: SlideProps) {
                     }
                 }
             );
+
+            if (x === 0 && y === 0) { 
+                return;
+            }
             //итоговые смещения за процесс относительно слайда, в %
             moveSlideObjects(
                 slide.id,

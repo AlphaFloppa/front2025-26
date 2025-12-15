@@ -1,14 +1,22 @@
+import { useEditor } from "../../hooks/editor.hooks";
 import style from "../presentationNameEditor/PresentationNameEditor.module.css";
 
-type PresentationNameEditorProps = {
-    currentName: string, 
-    changeHandler: Function
-}
-
-function PresentationNameEditor({currentName, changeHandler}: PresentationNameEditorProps){
+const PresentationNameEditor = () => {                          //обернуть в react.memo
+    const { useSelector, useDispatch } = useEditor();
+    const { changePresentationName } = useDispatch();
+    const currentName = useSelector(state => state.title);
     return (
         <div className={style.container}>
-            <input type="text" className={style.input} value={currentName} onChange={(e) => { changeHandler(e.target.value) } } />
+            <input
+                type="text"
+                className={style.input}
+                value={currentName}
+                onChange={
+                    (e) => {
+                        changePresentationName(e.target.value)
+                    }
+                }
+            />
         </div>
     );
 }

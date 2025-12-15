@@ -1,30 +1,29 @@
-import type { Presentation } from "../../Store/Model/presentation";
 import { Button } from "../../Common/Button/Button";
+import { useEditor } from "../../hooks/editor.hooks";
 import { PresentationNameEditor } from "../presentationNameEditor/PresentationNameEditor";
 import { SlidesList } from "../SlidesList/SlidesList";
 import style from "./PreviewArea.module.css";
 
-type PreviewAreaProps = {
-    presentation: Presentation,
-    eventHandlers:{
-        addBtn: Function,
-        changePresentationName: Function
-    }
-}
-
-function PreviewArea(
-    { presentation: { name, slides }, eventHandlers}: PreviewAreaProps
-) {
+const PreviewArea = () => {
+    const { useDispatch } = useEditor();
+    const { addSlide } = useDispatch();
     return (
         <div className={style.previewArea}>
             <div className={style.buttonWrapper}>
-                <Button clickHandler={() => { eventHandlers.addBtn() }} destination="addSlide" />
+                <Button
+                    clickHandler={
+                        () => {
+                            addSlide(
+                                Date.now.toString(),
+                                "newSlide"
+                            )
+                        }
+                    }
+                    destination="addSlide"
+                />
             </div>
-            <PresentationNameEditor 
-                currentName = {name} 
-                changeHandler={eventHandlers.changePresentationName}
-            />
-            <SlidesList list = {slides}/>
+            <PresentationNameEditor />
+            <SlidesList />
         </div>
     );
 }

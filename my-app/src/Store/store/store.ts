@@ -11,6 +11,7 @@ import * as SelectionActionCreators from "./action-creators/selection";
 import * as ContextMenuActionCreators from "./action-creators/contextMenu";
 import * as ModalWindowActionCreators from "./action-creators/modalWindow";
 import * as UndoRedoActionCreators from "./action-creators/undo_redo";
+import * as setStateActionCreators from "./action-creators/setter";
 import { undoRedoMiddleware } from "./middlewares/undo_redo";
 import { applyMiddleware } from "redux";
 import { composeWithDevTools } from "@redux-devtools/extension";
@@ -59,7 +60,8 @@ const useAppActions = () => {
             ...SelectionActionCreators,
             ...ContextMenuActionCreators,
             ...ModalWindowActionCreators,
-            ...UndoRedoActionCreators
+            ...UndoRedoActionCreators,
+            ...setStateActionCreators
         },
         dispatch
     )

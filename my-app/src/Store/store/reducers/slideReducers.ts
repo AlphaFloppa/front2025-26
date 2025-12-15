@@ -50,9 +50,8 @@ const slideReducer = (state = slides, { type, payload }: Action): Slide[] => {
                 {
                     slideId: payload.id,
                     objectId: payload.objectId,
-                    changes: payload.changes,
-                    isControlLeft: payload.isControlLeft,
-                    isControlUpper: payload.isControlUpper
+                    sizeChanges: payload.sizeChanges,
+                    positionChanges: payload.positionChanges
                 }
             );
         case "EDIT_TEXT":

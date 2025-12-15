@@ -20,7 +20,7 @@ type History = {
 let history: History = {
     past: [],
     present: {
-        title: presentation.name,
+        title: presentation.title,
         slides: presentation.slides,
         selection: {
             selectedSlides: [presentation.slides[0].id],
@@ -36,6 +36,7 @@ const undoRedoMiddleware: Middleware<{}, AppState, Dispatch<Action>> =
     ({ dispatch, getState }) => (next) => (action) => {
         //@ts-ignore
         const { type } = action;
+        //console.log(type);
         const { title, slides, selection } = getState();
         if (isLastActionModelChange) {
             history = {
@@ -43,7 +44,6 @@ const undoRedoMiddleware: Middleware<{}, AppState, Dispatch<Action>> =
                 past: [...history.past, history.present]
             };
         }
-        console.log(history);
         history = {
             ...history,
             present: {
@@ -57,11 +57,9 @@ const undoRedoMiddleware: Middleware<{}, AppState, Dispatch<Action>> =
                 selection
             }
         }
-        console.log(history);
-        console.log(type);
         //обновить present до актуального состояния даже если action обычный
 
-        if (type === "SET_STATE") { 
+        if (type === "SET_STATE") {
             return next(action)
         }
         if (type === "UNDO") {
@@ -73,7 +71,7 @@ const undoRedoMiddleware: Middleware<{}, AppState, Dispatch<Action>> =
             const newPast = [...history.past.slice(0, -1)];
             const newFuture = [...history.future, history.present]
             const newState = verify(history.past.at(-1));
-            console.log(newState);
+            console.debug(newState);
 
             history = {
                 past: newPast,
@@ -98,7 +96,7 @@ const undoRedoMiddleware: Middleware<{}, AppState, Dispatch<Action>> =
             const newState = verify(history.future.at(-1));
             const newPast = [...history.past, history.present]
             const newFuture = [...history.future.slice(0, -1)];
-            console.log(newState);
+            console.debug(newState);
 
             history = {
                 past: newPast,

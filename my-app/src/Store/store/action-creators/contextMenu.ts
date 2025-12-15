@@ -1,7 +1,12 @@
 import type { ContextMenu } from "../../Model/contextMenu";
 import type { Position } from "../../Model/slideContent";
 
-const enableContextMenu = (template: ContextMenu, position: Position, positionAtSlide?: Position) => ({
+type ContextMenuAction = {
+    type: "ENABLE_CONTEXT_MENU" | "DISABLE_CONTEXT_MENU",
+    payload?: {}
+}
+
+const enableContextMenu = (template: ContextMenu, position: Position, positionAtSlide?: Position): ContextMenuAction => ({
     type: "ENABLE_CONTEXT_MENU",
     payload: {
         template,
@@ -10,11 +15,12 @@ const enableContextMenu = (template: ContextMenu, position: Position, positionAt
     }
 });
 
-const disableContextMenu = () => ({
+const disableContextMenu = (): ContextMenuAction => ({
     type: "DISABLE_CONTEXT_MENU"
 });
 
 export {
     enableContextMenu,
-    disableContextMenu
+    disableContextMenu,
+    type ContextMenuAction
 }

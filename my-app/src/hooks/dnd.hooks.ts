@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from "react";
-import type { Position } from "../Store/Model/slideContent";
+import type { Position } from "../Store/Model/slideContent.js";
 /*
 onMouseDown накидывается на subjects,
 onMouseMove и onMouseUp на слайд
@@ -145,7 +145,7 @@ const useDnd = <containerType extends HTMLElement | null, userType extends HTMLE
                 usersRefs
             }: addDndArgs<containerType, userType>
         ) => {
-
+            console.log(...usersRefs);
             const MDlistenersArray = usersRefs.map(
                 userRef => ((e: MouseEvent) => {
                     mouseDownHandler(e, containerRef, userRef)

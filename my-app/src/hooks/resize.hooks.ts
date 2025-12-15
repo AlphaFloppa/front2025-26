@@ -6,18 +6,22 @@ import { useDnd, type dragHandlerArgs, type finishHandlerArgs, type startHandler
 //не работает редактирование текста
 
 type onStartArgs = {
-    controlRef: React.RefObject<HTMLDivElement | null>
+
 }
 
 type onResizeArgs = {
     deltaWidth: number,
     deltaHeight: number,
-    controlRef: React.RefObject<HTMLDivElement | null>,
     isControlUpper: boolean,
     isControlLeft: boolean
 }
 
-type onFinishArgs = onStartArgs;
+type onFinishArgs = {
+    deltaWidth: number,
+    deltaHeight: number,
+    isControlUpper: boolean,
+    isControlLeft: boolean
+};
 
 type ResizeArgs = {
     controlsRefs: {
@@ -49,33 +53,29 @@ const useResize = (
         onFinish
     }: ResizeArgs
 ) => {
-
     const { listenerEffect: LUListenerEffect } = useDnd<HTMLDivElement | null, HTMLDivElement | null>(
         {
             onStart: (
                 {
-                    userRef: controlRef
+
                 }: startHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
             ) => onStart(
                 {
-                    controlRef
+
                 }
             ),
             onDrag: (
                 {
                     globalOffsetX: x,
                     globalOffsetY: y,
-                    usersRefs
                 }: dragHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
             ) => {
-                const resizeControlRef = usersRefs[0];
                 const deltaWidth = -x;
                 const deltaHeight = -y;
                 onResize(
                     {
                         deltaWidth,
                         deltaHeight,
-                        controlRef: resizeControlRef,
                         isControlUpper: true,
                         isControlLeft: true
                     }
@@ -83,44 +83,46 @@ const useResize = (
             },
             onFinish: (
                 {
-                    usersRefs
+                    finishOffsetX: x,
+                    finishOffsetY: y,
                 }: finishHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
             ) => {
-                const controlRef = usersRefs[0];
+                const deltaWidth = -x;
+                const deltaHeight = -y;
                 onFinish(
                     {
-                        controlRef
+                        deltaWidth,
+                        deltaHeight,
+                        isControlUpper: true,
+                        isControlLeft: true
                     }
                 )
             }
-        });
+        }
+    );
 
     const { listenerEffect: LLListenerEffect } = useDnd<HTMLDivElement | null, HTMLDivElement | null>(
         {
             onStart: (
                 {
-                    userRef: controlRef
+
                 }: startHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
             ) => onStart(
                 {
-                    controlRef
                 }
             ),
             onDrag: (
                 {
                     globalOffsetX: x,
                     globalOffsetY: y,
-                    usersRefs
                 }: dragHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
             ) => {
-                const resizeControlRef = usersRefs[0];
                 const deltaWidth = -x;
                 const deltaHeight = y;
                 onResize(
                     {
                         deltaWidth,
                         deltaHeight,
-                        controlRef: resizeControlRef,
                         isControlUpper: false,
                         isControlLeft: true
                     }
@@ -128,44 +130,46 @@ const useResize = (
             },
             onFinish: (
                 {
-                    usersRefs
+                    finishOffsetX: x,
+                    finishOffsetY: y,
                 }: finishHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
             ) => {
-                const controlRef = usersRefs[0];
+                const deltaWidth = -x;
+                const deltaHeight = y;
                 onFinish(
                     {
-                        controlRef
+                        deltaWidth,
+                        deltaHeight,
+                        isControlUpper: false,
+                        isControlLeft: true
                     }
                 )
             }
-        });
+        }
+    );
 
     const { listenerEffect: RUListenerEffect } = useDnd<HTMLDivElement | null, HTMLDivElement | null>(
         {
             onStart: (
                 {
-                    userRef: controlRef
+
                 }: startHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
             ) => onStart(
                 {
-                    controlRef
                 }
             ),
             onDrag: (
                 {
                     globalOffsetX: x,
                     globalOffsetY: y,
-                    usersRefs
                 }: dragHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
             ) => {
-                const resizeControlRef = usersRefs[0];
                 const deltaWidth = x;
                 const deltaHeight = -y;
                 onResize(
                     {
                         deltaWidth,
                         deltaHeight,
-                        controlRef: resizeControlRef,
                         isControlUpper: true,
                         isControlLeft: false
                     }
@@ -173,44 +177,42 @@ const useResize = (
             },
             onFinish: (
                 {
-                    usersRefs
+                    finishOffsetX: x,
+                    finishOffsetY: y,
                 }: finishHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
             ) => {
-                const controlRef = usersRefs[0];
+                const deltaWidth = x;
+                const deltaHeight = -y;
                 onFinish(
                     {
-                        controlRef
+                        deltaWidth,
+                        deltaHeight,
+                        isControlUpper: true,
+                        isControlLeft: false
                     }
                 )
             }
-        });
+        }
+    );
 
     const { listenerEffect: RLListenerEffect } = useDnd<HTMLDivElement | null, HTMLDivElement | null>(
         {
             onStart: (
                 {
-                    userRef: controlRef
                 }: startHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
             ) => onStart(
-                {
-                    controlRef
-                }
+                {}
             ),
             onDrag: (
                 {
-                    globalOffsetX: x,
-                    globalOffsetY: y,
-                    usersRefs
+                    globalOffsetX: deltaWidth,
+                    globalOffsetY: deltaHeight,
                 }: dragHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
             ) => {
-                const resizeControlRef = usersRefs[0];
-                const deltaWidth = x;
-                const deltaHeight = y;
                 onResize(
                     {
                         deltaWidth,
                         deltaHeight,
-                        controlRef: resizeControlRef,
                         isControlUpper: false,
                         isControlLeft: false
                     }
@@ -218,50 +220,63 @@ const useResize = (
             },
             onFinish: (
                 {
-                    usersRefs
+                    finishOffsetX: deltaWidth,
+                    finishOffsetY: deltaHeight,
                 }: finishHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
             ) => {
-                const controlRef = usersRefs[0];
                 onFinish(
                     {
-                        controlRef
+                        deltaWidth,
+                        deltaHeight,
+                        isControlUpper: false,
+                        isControlLeft: false
                     }
                 )
             }
-        });
+        }
+    )
 
     useEffect(
         () => {
             const cleanUpArray = Array<Function>();
-            cleanUpArray.push(LUListenerEffect(
-                {
-                    containerRef,
-                    usersRefs: [controlsRefs.leftUpper.objectRef]
-                }
-            ));
-            cleanUpArray.push(LLListenerEffect(
-                {
-                    containerRef,
-                    usersRefs: [controlsRefs.leftLower.objectRef]
-                }
-            ));
+            cleanUpArray.push(
+                LUListenerEffect(
+                    {
+                        containerRef,
+                        usersRefs: [controlsRefs.leftUpper.objectRef]
+                    }
+                )
+            );
+            cleanUpArray.push(
+                LLListenerEffect(
+                    {
+                        containerRef,
+                        usersRefs: [controlsRefs.leftLower.objectRef]
+                    }
+                )
+            );
             cleanUpArray.push(RUListenerEffect(
                 {
                     containerRef,
                     usersRefs: [controlsRefs.rightUpper.objectRef]
                 }
-            ));
-            cleanUpArray.push(RLListenerEffect(
-                {
-                    containerRef,
-                    usersRefs: [controlsRefs.rightLower.objectRef]
-                }
-            ));
+            )
+            );
+            cleanUpArray.push(
+                RLListenerEffect(
+                    {
+                        containerRef,
+                        usersRefs: [controlsRefs.rightLower.objectRef]
+                    }
+                )
+            );
 
             return () => {
-                cleanUpArray.forEach(cleanUp => {
-                    cleanUp();
-                })
+                cleanUpArray.forEach(
+                    cleanUp => {
+                        cleanUp();
+                    }
+                )
             }
         }
     )

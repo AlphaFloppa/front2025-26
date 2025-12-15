@@ -1,21 +1,28 @@
 import type { Background, Position, Size, SlideObject } from "../../Model/slideContent";
 
-const renameSlide = (slideId: string, newName: string) => ({
+type SlideAction = {
+    type: "RENAME_SLIDE" | "REMOVE_SLIDE" | "ADD_SLIDE" | "REMOVE_OBJECTS_FROM_SLIDE" | 
+    "ADD_OBJECT_TO_SLIDE" | "MOVE_SLIDE_OBJECT" | "RESIZE_SLIDE_OBJECT" | "EDIT_TEXT" | 
+    "EDIT_FONT_FAMILY" | "EDIT_FONT_SIZE" | "EDIT_BG",
+    payload?: {}
+}
+
+const renameSlide = (slideId: string, newName: string): SlideAction => ({
     type: "RENAME_SLIDE",
     payload: {
         id: slideId,
         newName
     }
-});
+})
 
-const removeSlide = (slideId: string) => ({
+const removeSlide = (slideId: string): SlideAction => ({
     type: "REMOVE_SLIDE",
     payload: {
         id: slideId,
     }
 });
 
-const addSlide = (slideId: string, name: string) => ({
+const addSlide = (slideId: string, name: string): SlideAction => ({
     type: "ADD_SLIDE",
     payload: {
         id: slideId,
@@ -25,15 +32,15 @@ const addSlide = (slideId: string, name: string) => ({
 
 //const replaceSlide = (slideId: string, )
 
-const removeObjectsFromSlide = (slideId: string, removingObjectsIds: string[]) => ({
-    type: 'REMOVE_OBJECTS_FROM_SLIDE',
+const removeObjectsFromSlide = (slideId: string, removingObjectsIds: string[]): SlideAction => ({
+    type: "REMOVE_OBJECTS_FROM_SLIDE",
     payload: {
         id: slideId,
         removingObjectsIds
     }
 });
 
-const addObjectToSlide = (slideId: string, object: SlideObject) => ({
+const addObjectToSlide = (slideId: string, object: SlideObject): SlideAction => ({
     type: "ADD_OBJECT_TO_SLIDE",
     payload: {
         slideId,
@@ -41,7 +48,7 @@ const addObjectToSlide = (slideId: string, object: SlideObject) => ({
     }
 });
 
-const moveSlideObjects = (slideId: string, objectsIds: string[], changes: Position) => ({
+const moveSlideObjects = (slideId: string, objectsIds: string[], changes: Position): SlideAction => ({
     type: "MOVE_SLIDE_OBJECT",
     payload: {
         id: slideId,
@@ -50,18 +57,22 @@ const moveSlideObjects = (slideId: string, objectsIds: string[], changes: Positi
     }
 });
 
-const resizeSlideObject = (slideId: string, objectId: string, changes: Size, isControlLeft: boolean, isControlUpper: boolean) => ({
-    type: "RESIZE_SIDE_OBJECT",
+const resizeSlideObject = (
+    slideId: string,
+    objectId: string,
+    sizeChanges: Size,
+    positionChanges: Position
+    ): SlideAction => ({
+    type: "RESIZE_SLIDE_OBJECT",
     payload: {
         id: slideId,
         objectId,
-        changes,
-        isControlLeft,
-        isControlUpper
+        sizeChanges,
+        positionChanges
     }
 });
 
-const editText = (slideId: string, objectId: string, newText: string) => ({
+const editText = (slideId: string, objectId: string, newText: string): SlideAction => ({
     type: "EDIT_TEXT",
     payload: {
         id: slideId,
@@ -70,7 +81,7 @@ const editText = (slideId: string, objectId: string, newText: string) => ({
     }
 });
 
-const editFontFamily = (slideId: string, objectId: string, newFontFamily: string) => ({
+const editFontFamily = (slideId: string, objectId: string, newFontFamily: string): SlideAction => ({
     type: "EDIT_FONT_FAMILY",
     payload: {
         id: slideId,
@@ -79,7 +90,7 @@ const editFontFamily = (slideId: string, objectId: string, newFontFamily: string
     }
 });
 
-const editFontSize = (slideId: string, objectId: string, newFontSize: number) => ({
+const editFontSize = (slideId: string, objectId: string, newFontSize: number): SlideAction => ({
     type: "EDIT_FONT_SIZE",
     payload: {
         id: slideId,
@@ -88,7 +99,7 @@ const editFontSize = (slideId: string, objectId: string, newFontSize: number) =>
     }
 });
 
-const editBackground = (slideId: string, newBackground: Background) => ({
+const editBackground = (slideId: string, newBackground: Background): SlideAction => ({
     type: "EDIT_BG",
     payload: {
         id: slideId,
@@ -107,5 +118,6 @@ export {
     removeSlide,
     renameSlide,
     moveSlideObjects,
-    resizeSlideObject
+    resizeSlideObject,
+    type SlideAction
 }

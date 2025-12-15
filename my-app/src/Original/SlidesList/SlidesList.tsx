@@ -4,17 +4,12 @@ import style from "./SlidesList.module.css";
 import { useContextMenuTemplate } from "../../Common/ContextMenu/ContextMenu.hooks";
 import { useEditor } from "../../hooks/editor.hooks";
 
-type SlidesListProps = {
-    list: SlideType[],
-    onClickHandler?: Function,
-    onContextMenuHandler?: Function
-}
-
-function SlidesList({ list }: SlidesListProps) {
-    const { useDispatch } = useEditor();
+const SlidesList = () => {                      //обернуть в react.memo
+    const { useDispatch, useSelector } = useEditor();
     const { createSlideListCM } = useContextMenuTemplate();
     const { enableContextMenu, disableContextMenu } = useDispatch();
-    const slideContextMenuHandler = (                       //сборка вне и прокидывание в пропсах
+    const slidesList = useSelector(state => state.slides);
+    const slideContextMenuHandler = (                    
         e: React.MouseEvent<HTMLDivElement>,
         slide: SlideType
     ) => {
@@ -28,7 +23,7 @@ function SlidesList({ list }: SlidesListProps) {
     return (
         <ol className={style.slideList}>
             {
-                list.map(
+                slidesList.map(
                     (slide: SlideType) => {
                         return (
                             <li key={slide.id} className={style.slideWrapper}>

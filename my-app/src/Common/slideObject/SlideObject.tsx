@@ -1,5 +1,5 @@
-import { forwardRef, useRef } from "react";
-import type { SlideObject as SlideObjectType } from "../../Store/Model/slideContent";
+import { forwardRef, useRef, useState } from "react";
+import type { Position, Size, SlideObject as SlideObjectType } from "../../Store/Model/slideContent";
 import style from "../slideObject/SlideObject.module.css";
 import controlsStyle from "./slideObjectControl.module.css";
 import { useContextMenuTemplate } from "../ContextMenu/ContextMenu.hooks";
@@ -7,6 +7,7 @@ import type React from "react";
 import { useEditor } from "../../hooks/editor.hooks";
 import { useResize } from "../../hooks/resize.hooks";
 import { useStyle } from "./slideObject.styles";
+import { verify } from "../../Store/Services/editFunctions";
 
 type SlideObjectProps = {
     object: SlideObjectType,
@@ -23,14 +24,28 @@ const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
             useDispatch,
             useSelector
         } = useEditor();
-        const { selectSlideObject, enableContextMenu, disableContextMenu, resizeSlideObject } = useDispatch();
+        const {
+            selectSlideObject,
+            enableContextMenu,
+            disableContextMenu,
+            resizeSlideObject
+        } = useDispatch();
         const { createSlideObjectCM } = useContextMenuTemplate();
         const { isEnabled } = useSelector(state => state.contextMenu);
         const { selectedSlides, selectedSlideObjects } = useSelector(state => state.selection);
         const activeSlideId = selectedSlides[0];
         const objectDOMNodeRef = useRef<HTMLTextAreaElement | HTMLDivElement | null>(null);
+        const [isResizing, setIsResizing] = useState<boolean>(false);
+        const [resizeIntermediateSize, setResizeIntermediateSize] = useState<Size>({ width: 20, height: 30 });
+        const [resizeIntermediatePosition, setResizeIntermediatePosition] = useState<Position>({ x: 100, y: 200 });
         useStyle(
-            object,
+            isResizing
+                ? {
+                    ...object,
+                    position: resizeIntermediatePosition,
+                    size: resizeIntermediateSize
+                }
+                : object,
             objectDOMNodeRef,
             containerRef
         );
@@ -62,19 +77,44 @@ const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
                     { deltaWidth, deltaHeight, isControlUpper, isControlLeft }:
                         { deltaWidth: number, deltaHeight: number, isControlUpper: boolean, isControlLeft: boolean }
                 ) => {
+                    const { width, height } = verify(containerRef.current?.getBoundingClientRect())
+                    setResizeIntermediatePosition(
+                        {
+                            x: isControlLeft ? object.position.x - deltaWidth / 2 : object.position.x + deltaWidth / 2,
+                            y: isControlUpper ? object.position.y - deltaHeight / 2 : object.position.y + deltaHeight / 2
+                        }
+                    );
+                    setResizeIntermediateSize(
+                        {
+                            width: object.size.width + (deltaWidth / width * 100),
+                            height: object.size.height + (deltaHeight / height * 100)
+                        }
+                    );
+                },
+                onStart: () => {
+                    setIsResizing(true);
+                    setResizeIntermediatePosition(object.position);
+                    setResizeIntermediateSize(object.size);
+                },
+                onFinish: (
+                    { deltaWidth, deltaHeight, isControlUpper, isControlLeft }:
+                        { deltaWidth: number, deltaHeight: number, isControlUpper: boolean, isControlLeft: boolean }
+                ) => {
+                    const { width, height } = verify(containerRef.current?.getBoundingClientRect())
                     resizeSlideObject(
                         activeSlideId,
                         object.id,
                         {
-                            width: deltaWidth,
-                            height: deltaHeight
+                            width: deltaWidth / width * 100,
+                            height: deltaHeight / height * 100
                         },
-                        isControlUpper,
-                        isControlLeft
+                        {
+                            x: isControlLeft ? - deltaWidth / 2 : deltaWidth / 2,
+                            y: isControlUpper ? - deltaHeight / 2 : deltaHeight / 2
+                        }
                     )
-                },
-                onStart: () => { },
-                onFinish: () => { }
+                    setIsResizing(false);
+                }
             }
         );
 
@@ -116,9 +156,14 @@ const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
                             onClick={
                                 (e) => {
                                     e.stopPropagation();
-                                    disableContextMenu();
-                                    selectSlideObject(object.id, e.ctrlKey);
-                                    //другая нагрузка
+                                    if (isEnabled) {
+                                        disableContextMenu();
+                                    }
+                                    if (
+                                        !selectedSlideObjects.some(id => id === object.id)
+                                    ) {
+                                        selectSlideObject(object.id, e.ctrlKey);
+                                    }
                                 }
                             }
                             onContextMenu={slideObjectContextMenuHandler}
@@ -162,8 +207,14 @@ const SlideObject = forwardRef<HTMLDivElement | null, SlideObjectProps>(
                             onClick={
                                 (e) => {
                                     e.stopPropagation();
-                                    selectSlideObject(object.id, e.ctrlKey);
-                                    //другая нагрузка
+                                    if (isEnabled) {
+                                        disableContextMenu();
+                                    }
+                                    if (
+                                        !selectedSlideObjects.some(id => id === object.id)
+                                    ) {
+                                        selectSlideObject(object.id, e.ctrlKey);
+                                    }
                                 }
                             }
                             onContextMenu={slideObjectContextMenuHandler}

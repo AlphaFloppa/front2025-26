@@ -1,6 +1,6 @@
 import { createRoot } from "react-dom/client";
 import style from "./index.module.css";
-import { App } from "./Original/App/App.tsx";
+import { App } from "./Original/App/app.tsx";
 import { verify } from "./Store/Services/editFunctions.ts";
 import { Provider } from "react-redux";
 import { store } from "./Store/store/store.ts";
@@ -12,7 +12,7 @@ const root = createRoot(container);
 let render: Function = () => {
   root.render(
     <Provider store={store}>
-      <App/>
+      <App />
     </Provider>
   );
 };

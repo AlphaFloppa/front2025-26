@@ -1,7 +1,7 @@
 import type { Presentation } from "../../Model/presentation"
 
 let presentation: Presentation = {
-    name: "Моя первая презентация",
+    title: "Моя первая презентация",
     slides: [
         {
             id: "slide_1",

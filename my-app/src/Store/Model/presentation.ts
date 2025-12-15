@@ -3,5 +3,5 @@ export type {Presentation};
 
 type Presentation = {
     slides: Slide[],
-    name: string
+    title: string
 }
