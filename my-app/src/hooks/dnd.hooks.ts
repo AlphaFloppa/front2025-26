@@ -26,7 +26,8 @@ type finishHandlerArgs<containerType extends HTMLElement | null, userType extend
     finishOffsetX: number,
     finishOffsetY: number,
     containerRef: React.RefObject<containerType>,
-    usersRefs: React.RefObject<userType>[]
+    usersRefs: React.RefObject<userType>[],
+    e?: MouseEvent
 };
 
 type addDndArgs<containerType extends HTMLElement | null, userType extends HTMLElement | null> = {
@@ -119,10 +120,11 @@ const useDnd = <containerType extends HTMLElement | null, userType extends HTMLE
 
     const mouseUpHandler = useCallback(
         (
-            { clientX, clientY }: MouseEvent,
+            e: MouseEvent,
             containerRef: React.RefObject<containerType>,
             usersRefs: React.RefObject<userType>[]
         ) => {
+            const { clientX, clientY } = e;
             const finishOffsetX = ((clientX - (containerRef.current?.getBoundingClientRect().x ?? 0)) - startPosition.current.x);
             const finishOffsetY = ((clientY - (containerRef.current?.getBoundingClientRect().y ?? 0)) - startPosition.current.y);
             //вызов handler процесса
@@ -130,7 +132,8 @@ const useDnd = <containerType extends HTMLElement | null, userType extends HTMLE
                 finishOffsetX,
                 finishOffsetY,
                 containerRef,
-                usersRefs
+                usersRefs,
+                e
             });
 
             setIsDragging(false);
@@ -145,7 +148,6 @@ const useDnd = <containerType extends HTMLElement | null, userType extends HTMLE
                 usersRefs
             }: addDndArgs<containerType, userType>
         ) => {
-            console.log(...usersRefs);
             const MDlistenersArray = usersRefs.map(
                 userRef => ((e: MouseEvent) => {
                     mouseDownHandler(e, containerRef, userRef)

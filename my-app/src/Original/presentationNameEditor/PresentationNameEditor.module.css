@@ -1,6 +1,4 @@
 .container {
-  position: absolute;
-  inset: 2%;
   width: 98%;
   padding: 0.5rem;
   height: fit-content;

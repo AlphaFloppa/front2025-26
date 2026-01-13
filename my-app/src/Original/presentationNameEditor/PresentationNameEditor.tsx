@@ -3,7 +3,7 @@ import style from "../presentationNameEditor/PresentationNameEditor.module.css";
 
 const PresentationNameEditor = () => {                          //обернуть в react.memo
     const { useSelector, useDispatch } = useEditor();
-    const { changePresentationName } = useDispatch();
+    const { changeTitle } = useDispatch();
     const currentName = useSelector(state => state.title);
     return (
         <div className={style.container}>
@@ -13,7 +13,11 @@ const PresentationNameEditor = () => {                          //обернут
                 value={currentName}
                 onChange={
                     (e) => {
-                        changePresentationName(e.target.value)
+                        changeTitle(
+                            {
+                                title: e.target.value
+                            }
+                        )
                     }
                 }
             />

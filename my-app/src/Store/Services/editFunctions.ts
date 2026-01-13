@@ -23,14 +23,11 @@ function verify<T>(value: T | undefined | null) {
 }
 
 
-//move slide set by indexes array
-function replaceSlide(presentation: Presentation, payload: { order: string[] }): Presentation {
-    return {
-        ...presentation,
-        slides: payload.order.map(
-            slideId => verify(presentation.slides.find(slide => slide.id === slideId))          //verify
-        )
-    };
+//move slide set by ids array
+function replaceSlide(slides: Slide[], payload: { order: string[] }): Slide[] {
+    return payload.order.map(
+        slideId => verify(slides.find(slide => slide.id === slideId))          //verify
+    );
 }
 
 function removeObjectsFromSlide(slides: Slide[], payload: { slideId: string, removingObjectsIds: string[] }): Slide[] {
@@ -111,7 +108,7 @@ function moveSlideObject(
 
 function resizeSlideObject(
     slides: Slide[],
-    payload: { slideId: string, objectId: string, sizeChanges: Size, positionChanges: Position}                 //Size obj in params
+    payload: { slideId: string, objectId: string, sizeChanges: Size, positionChanges: Position }                 //Size obj in params
 ): Slide[] {
     return slides.map(slide =>
         slide.id == payload.slideId ?
@@ -237,7 +234,7 @@ function createSlide(payload: { id: string }): Slide {
 function createPresentation(): Presentation {
     return {
         slides: [],
-        name: "Unnamed1"
+        title: "Unnamed1"
     }
 }
 
@@ -263,8 +260,8 @@ function createImageObject(payload: { id: string, position: Position, src: strin
     return {
         type: "image",
         size: {
-            width: 100,
-            height: 100
+            width: 40,
+            height: 25
         },
         layer: 1,
         ...payload

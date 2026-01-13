@@ -1,9 +1,13 @@
-:root{
-    --accent-gradient: linear-gradient(135deg, #2a1a33 0%, #3a2a43 100%);
-}
-
-.toolbar{
-    padding: 1%;
+.toolbar {
+    background: var(--color-bg-toolbar);
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 20;
+    /*padding: 1%;
     width: 100%;
     height: 5rem;
     min-height: 70px; 
@@ -12,25 +16,50 @@
     align-items: center;
     gap: 3rem;
     box-shadow: 0 2px 8px rgb(138 43 226 / 20%);
-    background: var(--accent-gradient);
+    background: var(--accent-gradient);*/
 }
 
-.section{
-    height: 80%;
+.section {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    /*height: 80%;
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
     gap: 20%;
     padding: 0;
-    width: fit-content;
+    width: fit-content;*/
 }
 
-.toolbar section.add-object{
+.toolbar section.add-object {
     border-right: 2px solid wheat;
 }
 
-.toolbar section button{
-    width: 40px;
+.toolbar section button {
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--color-bg-card);
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /*width: 40px;
     height: 40px;
-    padding: 2px;
+    padding: 2px;*/
+}
+
+.toolbar section button {
+    background: var(--color-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.toolbar section button.active {
+    background: var(--color-accent);
+    color: white;
 }

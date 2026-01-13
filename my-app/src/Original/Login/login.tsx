@@ -1,6 +1,7 @@
 import { useUser } from "../../hooks/user.hooks";
 import { useState } from "react";
 import { verify } from "../../Store/Services/editFunctions";
+import style from "./style.module.css"
 
 const Login = () => {
     const { login, register, logout } = verify(useUser());
@@ -10,7 +11,9 @@ const Login = () => {
     return (
         <section>
             <h1>Login or register</h1>
-            <form>
+            <form
+                className={style.form}
+            >
                 <input
                     type="email"
                     placeholder="Email"
@@ -31,7 +34,9 @@ const Login = () => {
                         }
                     }
                 />
-                <div>
+                <div
+                    className={ style.buttonContainer }
+                >
                     <button
                         className="button"
                         type="button"

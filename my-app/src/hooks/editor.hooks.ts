@@ -1,4 +1,5 @@
-import { useSelector, useDispatch } from "../Store/store/store";
+import { useSelector } from "../Store/store/hooks/useSelector";
+import { useDispatch } from "../Store/store/hooks/useDispatch";
 
 const useEditor = () => {
 

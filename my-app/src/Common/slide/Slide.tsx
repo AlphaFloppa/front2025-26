@@ -37,8 +37,7 @@ function Slide({ slide }: SlideProps) {
     const slideDOMNodeRef = useRef<HTMLDivElement | null>(null);
     useStyle(
         slide,
-        slideDOMNodeRef,
-        false
+        slideDOMNodeRef
     );
     const { createWorkplaceSlideCM } = useContextMenuTemplate();
     const clickHandler = useCallback(
@@ -67,16 +66,24 @@ function Slide({ slide }: SlideProps) {
                 return;
             }
             const {
-                clientX: x,
-                clientY: y,
+                clientX,
+                clientY,
                 nativeEvent: { offsetX, offsetY }
             } = e;
             enableContextMenu(
-                createWorkplaceSlideCM(),
-                { x, y },
                 {
-                    x: offsetX,
-                    y: offsetY
+                    template: createWorkplaceSlideCM(),
+                    position: {
+                        x: clientX,
+                        y: clientY
+                    },
+                    positionAtSlide: getClickRelativePositionAtSlide(
+                        {
+                            offsetX,
+                            offsetY
+                        },
+                        slideDOMNodeRef.current
+                    )
                 }
             )
         },
@@ -106,7 +113,6 @@ function Slide({ slide }: SlideProps) {
                 usersRefs: slideObjectRefs
             }: dragHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
         ) => {
-            console.info(...slideObjectRefs);
             slideObjectRefs.forEach(
                 slideObjectRef => {
                     if (slideObjectRef.current) {
@@ -137,16 +143,21 @@ function Slide({ slide }: SlideProps) {
                 }
             );
 
-            if (x === 0 && y === 0) { 
+            if (x === 0 && y === 0) {
                 return;
             }
             //итоговые смещения за процесс относительно слайда, в %
             moveSlideObjects(
-                slide.id,
-                selectedSlideObjectsIds,
                 {
-                    x,
-                    y
+                    id: slide.id,
+                    objectsIds: selectedSlideObjectsIds,
+                    changes: getClickRelativePositionAtSlide(
+                        {
+                            offsetX: x,
+                            offsetY: y
+                        },
+                        slideDOMNodeRef.current
+                    )
                 }
             );
         },
@@ -162,7 +173,7 @@ function Slide({ slide }: SlideProps) {
         }
     );
 
-    const slideObjectsRefMap = useMemo(
+    const slideObjectsRefMap = useMemo(             //map id(из селектованных) -> ref
         () => {
             const map = new Map<string, React.RefObject<HTMLDivElement | null>>();
             selectedSlideObjectsIds.map(

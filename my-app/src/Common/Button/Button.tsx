@@ -1,6 +1,5 @@
 import style from "../Button/Button.module.css";
 
-//todo type buttonstyle = primary | secondary
 const defineButtonStyle = (destination: ButtonDestination): string => {  
     return(
         {
@@ -10,12 +9,15 @@ const defineButtonStyle = (destination: ButtonDestination): string => {
             "addImage": style.addImage, 
             "addSlide": style.addSlide,
             "apply": style.applyBtn,
-            "cancel": style.cancelBtn
+            "cancel": style.cancelBtn,
+            "undo": style.undo,
+            "redo": style.redo,
+            "overview": style.overview
         }[destination]
     ) as string;
 }
 
-type ButtonDestination = "editFontSize" | "editFontFamily" | "addText" | "addImage" | "addSlide" | "apply" | "cancel";
+type ButtonDestination = "editFontSize" | "editFontFamily" | "addText" | "addImage" | "addSlide" | "apply" | "cancel" | "undo" | "redo" | "overview";
 
 type ButtonProps = {
     clickHandler: Function,

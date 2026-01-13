@@ -7,22 +7,24 @@ import style from "./PreviewArea.module.css";
 const PreviewArea = () => {
     const { useDispatch } = useEditor();
     const { addSlide } = useDispatch();
+    const addSlideHandler = () => {
+        addSlide(
+            {
+                id: crypto.randomUUID(),
+            }
+        )
+    };
     return (
         <div className={style.previewArea}>
-            <div className={style.buttonWrapper}>
-                <Button
-                    clickHandler={
-                        () => {
-                            addSlide(
-                                Date.now.toString(),
-                                "newSlide"
-                            )
-                        }
-                    }
-                    destination="addSlide"
-                />
+            <div className={style.upperContainer}>
+                <PresentationNameEditor />
+                <div className={style.buttonWrapper}>
+                    <Button
+                        clickHandler={ addSlideHandler }
+                        destination="addSlide"
+                    />
+                </div>
             </div>
-            <PresentationNameEditor />
             <SlidesList />
         </div>
     );

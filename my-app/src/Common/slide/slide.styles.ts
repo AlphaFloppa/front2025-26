@@ -7,17 +7,10 @@ import type { Slide } from "../../Store/Model/slide"
 const useStyle = 
     (
         slide: Slide,
-        slideRef: React.RefObject<HTMLDivElement | null>,
-        isMini: boolean
+        slideRef: React.RefObject<HTMLDivElement | null>
     ) => {
         useEffect(
             () => {
-                slideRef.current?.style.setProperty(
-                    "--k",
-                    isMini
-                        ? "0.2124"
-                        : "1"
-                );
                 if (slide.background.type === "color") {
                     slideRef.current?.style.setProperty("--definedBgColor", slide.background.code)
                 } else {

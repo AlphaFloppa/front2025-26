@@ -23,3 +23,7 @@
 .mini *{
     user-select: none;
 }
+
+.selected{
+    outline: 0.35rem solid red;
+}

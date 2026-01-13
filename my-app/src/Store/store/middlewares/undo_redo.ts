@@ -4,6 +4,7 @@ import type { Slide } from "../../Model/slide";
 import type { Selection } from "../../Model/selection";
 import { verify } from "../../Services/editFunctions";
 import { presentation } from "../../Services/data/generalData";
+import { setState } from "../hooks/useDispatch";
 
 type State = {
     title: string,
@@ -30,6 +31,18 @@ let history: History = {
     future: []
 }
 
+const ignoreActionsList = [
+    "enableModalWindow",
+    "disableModalWindow",
+    "enableContextMenu",
+    "disableContextMenu",
+    "nullifySlideSelection",
+    "nullifySlideObjectSelection",
+    "selectSlide",
+    "selectSlideObject",
+    "setState"
+];
+
 let isLastActionModelChange = false;
 
 const undoRedoMiddleware: Middleware<{}, AppState, Dispatch<Action>> =
@@ -38,7 +51,7 @@ const undoRedoMiddleware: Middleware<{}, AppState, Dispatch<Action>> =
         const { type } = action;
         //console.log(type);
         const { title, slides, selection } = getState();
-        if (isLastActionModelChange) {
+        if (isLastActionModelChange) {              //запись в past
             history = {
                 ...history,
                 past: [...history.past, history.present]
@@ -57,6 +70,7 @@ const undoRedoMiddleware: Middleware<{}, AppState, Dispatch<Action>> =
                 selection
             }
         }
+        //console.debug(history);
         //обновить present до актуального состояния даже если action обычный
 
         if (type === "SET_STATE") {
@@ -71,7 +85,7 @@ const undoRedoMiddleware: Middleware<{}, AppState, Dispatch<Action>> =
             const newPast = [...history.past.slice(0, -1)];
             const newFuture = [...history.future, history.present]
             const newState = verify(history.past.at(-1));
-            console.debug(newState);
+            //console.debug(newState);
 
             history = {
                 past: newPast,
@@ -79,14 +93,8 @@ const undoRedoMiddleware: Middleware<{}, AppState, Dispatch<Action>> =
                 present: newState,
             }
 
-            dispatch(
-                {
-                    type: "SET_STATE",
-                    payload: {
-                        state: newState
-                    }
-                } as Action
-            )
+            setState(newState)(dispatch);
+
         } else if (type === "REDO") {
             isLastActionModelChange = false;
             if (history.future.length === 0) {
@@ -96,7 +104,7 @@ const undoRedoMiddleware: Middleware<{}, AppState, Dispatch<Action>> =
             const newState = verify(history.future.at(-1));
             const newPast = [...history.past, history.present]
             const newFuture = [...history.future.slice(0, -1)];
-            console.debug(newState);
+            //console.debug(newState);
 
             history = {
                 past: newPast,
@@ -104,33 +112,22 @@ const undoRedoMiddleware: Middleware<{}, AppState, Dispatch<Action>> =
                 future: newFuture
             }
 
-            dispatch(
-                {
-                    type: "SET_STATE",
-                    payload: {
-                        state: newState
-                    }
-                } as Action
-            )
+            setState(newState)(dispatch);
+
         } else {
             if (
-                ![
-                    "ENABLE_MODAL_WINDOW",
-                    "DISABLE_MODAL_WINDOW",
-                    "ENABLE_CONTEXT_MENU",
-                    "DISABLE_CONTEXT_MENU"
-                ].some(menuActionType => type === menuActionType)
+                ignoreActionsList.some(ignoringType => type.includes(ignoringType))
             ) {
-                console.log("case model change");
-                isLastActionModelChange = true;
-            } else {
                 isLastActionModelChange = false;
-            }
-            if (history.future.length !== 0) {
-                history = {
-                    ...history,
-                    future: []
-                };
+            } else {
+                //console.log("case model change");
+                isLastActionModelChange = true;
+                if (history.future.length !== 0) {
+                    history = {
+                        ...history,
+                        future: []
+                    };
+                }
             }
             return next(action);
         }
@@ -138,4 +135,8 @@ const undoRedoMiddleware: Middleware<{}, AppState, Dispatch<Action>> =
 
 export {
     undoRedoMiddleware
+}
+
+export type { 
+    State
 }

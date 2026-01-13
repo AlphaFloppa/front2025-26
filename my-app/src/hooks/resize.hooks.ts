@@ -13,6 +13,7 @@ type onResizeArgs = {
     deltaWidth: number,
     deltaHeight: number,
     isControlUpper: boolean,
+    isControlMiddle: boolean,
     isControlLeft: boolean
 }
 
@@ -20,6 +21,7 @@ type onFinishArgs = {
     deltaWidth: number,
     deltaHeight: number,
     isControlUpper: boolean,
+    isControlMiddle: boolean,
     isControlLeft: boolean
 };
 
@@ -28,13 +30,25 @@ type ResizeArgs = {
         rightUpper: {
             objectRef: React.RefObject<HTMLDivElement | null>
         },
+        rightMiddle: {
+            objectRef: React.RefObject<HTMLDivElement | null>
+        },
         rightLower: {
             objectRef: React.RefObject<HTMLDivElement | null>
         },
         leftLower: {
             objectRef: React.RefObject<HTMLDivElement | null>
         },
+        leftMiddle: {
+            objectRef: React.RefObject<HTMLDivElement | null>
+        }
         leftUpper: {
+            objectRef: React.RefObject<HTMLDivElement | null>
+        },
+        upperMiddle: {
+            objectRef: React.RefObject<HTMLDivElement | null>
+        },
+        lowerMiddle: {
             objectRef: React.RefObject<HTMLDivElement | null>
         }
     },
@@ -77,6 +91,7 @@ const useResize = (
                         deltaWidth,
                         deltaHeight,
                         isControlUpper: true,
+                        isControlMiddle: false,
                         isControlLeft: true
                     }
                 );
@@ -94,6 +109,53 @@ const useResize = (
                         deltaWidth,
                         deltaHeight,
                         isControlUpper: true,
+                        isControlMiddle: false,
+                        isControlLeft: true
+                    }
+                )
+            }
+        }
+    );
+
+    const { listenerEffect: LMListenerEffect } = useDnd<HTMLDivElement | null, HTMLDivElement | null>(
+        {
+            onStart: (
+                {
+
+                }: startHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
+            ) => onStart(
+                {
+
+                }
+            ),
+            onDrag: (
+                {
+                    globalOffsetX: x,
+                }: dragHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
+            ) => {
+                const deltaWidth = -x;
+                onResize(
+                    {
+                        deltaWidth,
+                        deltaHeight: 0,
+                        isControlUpper: false,
+                        isControlMiddle: true,
+                        isControlLeft: true
+                    }
+                );
+            },
+            onFinish: (
+                {
+                    finishOffsetX: x
+                }: finishHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
+            ) => {
+                const deltaWidth = -x;
+                onFinish(
+                    {
+                        deltaWidth,
+                        deltaHeight: 0,
+                        isControlUpper: false,
+                        isControlMiddle: true,
                         isControlLeft: true
                     }
                 )
@@ -124,6 +186,7 @@ const useResize = (
                         deltaWidth,
                         deltaHeight,
                         isControlUpper: false,
+                        isControlMiddle: false,
                         isControlLeft: true
                     }
                 );
@@ -141,6 +204,7 @@ const useResize = (
                         deltaWidth,
                         deltaHeight,
                         isControlUpper: false,
+                        isControlMiddle: false,
                         isControlLeft: true
                     }
                 )
@@ -171,6 +235,7 @@ const useResize = (
                         deltaWidth,
                         deltaHeight,
                         isControlUpper: true,
+                        isControlMiddle: false,
                         isControlLeft: false
                     }
                 );
@@ -188,6 +253,53 @@ const useResize = (
                         deltaWidth,
                         deltaHeight,
                         isControlUpper: true,
+                        isControlMiddle: false,
+                        isControlLeft: false
+                    }
+                )
+            }
+        }
+    );
+
+    const { listenerEffect: RMListenerEffect } = useDnd<HTMLDivElement | null, HTMLDivElement | null>(
+        {
+            onStart: (
+                {
+
+                }: startHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
+            ) => onStart(
+                {
+
+                }
+            ),
+            onDrag: (
+                {
+                    globalOffsetX: x,
+                }: dragHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
+            ) => {
+                const deltaWidth = x;
+                onResize(
+                    {
+                        deltaWidth,
+                        deltaHeight: 0,
+                        isControlUpper: false,
+                        isControlMiddle: true,
+                        isControlLeft: false
+                    }
+                );
+            },
+            onFinish: (
+                {
+                    finishOffsetX: x
+                }: finishHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
+            ) => {
+                const deltaWidth = x;
+                onFinish(
+                    {
+                        deltaWidth,
+                        deltaHeight: 0,
+                        isControlUpper: false,
+                        isControlMiddle: true,
                         isControlLeft: false
                     }
                 )
@@ -214,6 +326,7 @@ const useResize = (
                         deltaWidth,
                         deltaHeight,
                         isControlUpper: false,
+                        isControlMiddle: false,
                         isControlLeft: false
                     }
                 );
@@ -229,12 +342,103 @@ const useResize = (
                         deltaWidth,
                         deltaHeight,
                         isControlUpper: false,
+                        isControlMiddle: false,
                         isControlLeft: false
                     }
                 )
             }
         }
-    )
+    );
+
+    const { listenerEffect: UMListenerEffect } = useDnd<HTMLDivElement | null, HTMLDivElement | null>(
+        {
+            onStart: (
+                {
+
+                }: startHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
+            ) => onStart(
+                {
+
+                }
+            ),
+            onDrag: (
+                {
+                    globalOffsetY: y,
+                }: dragHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
+            ) => {
+                const deltaHeight = -y;
+                onResize(
+                    {
+                        deltaWidth: 0,
+                        deltaHeight,
+                        isControlUpper: true,
+                        isControlMiddle: true,
+                        isControlLeft: false
+                    }
+                );
+            },
+            onFinish: (
+                {
+                    finishOffsetY: y
+                }: finishHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
+            ) => {
+                const deltaHeight = -y;
+                onFinish(
+                    {
+                        deltaWidth: 0,
+                        deltaHeight,
+                        isControlUpper: true,
+                        isControlMiddle: true,
+                        isControlLeft: false
+                    }
+                )
+            }
+        }
+    );
+
+    const { listenerEffect: LowerMListenerEffect } = useDnd<HTMLDivElement | null, HTMLDivElement | null>(
+        {
+            onStart: (
+                {
+
+                }: startHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
+            ) => onStart(
+                {
+
+                }
+            ),
+            onDrag: (
+                {
+                    globalOffsetY: deltaHeight,
+                }: dragHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
+            ) => {
+                onResize(
+                    {
+                        deltaWidth: 0,
+                        deltaHeight,
+                        isControlUpper: false,
+                        isControlMiddle: true,
+                        isControlLeft: false
+                    }
+                );
+            },
+            onFinish: (
+                {
+                    finishOffsetY: deltaHeight
+                }: finishHandlerArgs<HTMLDivElement | null, HTMLDivElement | null>
+            ) => {
+                onFinish(
+                    {
+                        deltaWidth: 0,
+                        deltaHeight,
+                        isControlUpper: false,
+                        isControlMiddle: true,
+                        isControlLeft: false
+                    }
+                )
+            }
+        }
+    );
 
     useEffect(
         () => {
@@ -248,6 +452,14 @@ const useResize = (
                 )
             );
             cleanUpArray.push(
+                LMListenerEffect(
+                    {
+                        containerRef,
+                        usersRefs: [controlsRefs.leftMiddle.objectRef]
+                    }
+                )
+            );
+            cleanUpArray.push(
                 LLListenerEffect(
                     {
                         containerRef,
@@ -255,18 +467,43 @@ const useResize = (
                     }
                 )
             );
-            cleanUpArray.push(RUListenerEffect(
-                {
-                    containerRef,
-                    usersRefs: [controlsRefs.rightUpper.objectRef]
-                }
-            )
+            cleanUpArray.push(
+                RUListenerEffect(
+                    {
+                        containerRef,
+                        usersRefs: [controlsRefs.rightUpper.objectRef]
+                    }
+                )
+            );
+            cleanUpArray.push(
+                RMListenerEffect(
+                    {
+                        containerRef,
+                        usersRefs: [controlsRefs.rightMiddle.objectRef]
+                    }
+                )
             );
             cleanUpArray.push(
                 RLListenerEffect(
                     {
                         containerRef,
                         usersRefs: [controlsRefs.rightLower.objectRef]
+                    }
+                )
+            );
+            cleanUpArray.push(
+                UMListenerEffect(
+                    {
+                        containerRef,
+                        usersRefs: [controlsRefs.upperMiddle.objectRef]
+                    }
+                )
+            );
+            cleanUpArray.push(
+                LowerMListenerEffect(
+                    {
+                        containerRef,
+                        usersRefs: [controlsRefs.lowerMiddle.objectRef]
                     }
                 )
             );

@@ -4,32 +4,25 @@ import { useEditor } from "./editor.hooks";
 const useUndoRedo = () => {
     const { useDispatch } = useEditor();
     const { undo, redo } = useDispatch();
-    const undoHandler = useCallback(
+    const keyboardHandler = useCallback(
         (e: KeyboardEvent) => {
-            if (e.code === "KeyZ" && e.ctrlKey) {
-                e.preventDefault;
-                undo();
-            }
+            if (e.code === "KeyZ" && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault;    
+                if (!e.shiftKey) {
+                    undo();
+                } else { 
+                    redo();
+                }
+            } 
         },
-        [undo]
-    );
-    const redoHandler = useCallback(
-        (e: KeyboardEvent) => {
-            if (e.code === "KeyX" && e.ctrlKey) {
-                e.preventDefault;
-                redo();
-            }
-        },
-        [redo]
+        [undo, redo]
     );
     useEffect(
         () => {
-            window.addEventListener("keyup", undoHandler);
-            window.addEventListener("keyup", redoHandler);
+            window.addEventListener("keyup", keyboardHandler);
 
             return () => {
-                window.removeEventListener("keyup", undoHandler);
-                window.removeEventListener("keyup", redoHandler);
+                window.removeEventListener("keyup", keyboardHandler);
             }
         }
     );

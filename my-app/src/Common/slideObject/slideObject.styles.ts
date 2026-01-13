@@ -1,28 +1,16 @@
 import type { SlideObject } from "../../Store/Model/slideContent";
 import type React from "react";
-import { getClickRelativePositionAtSlide } from "../slide/Slide";
 import { useCallback, useEffect } from "react";
 
 const setObjectConstantProps = (
     object: SlideObject,
-    objectRef: React.RefObject<HTMLDivElement | HTMLTextAreaElement | null>,
-    containerRef: React.RefObject<HTMLDivElement | null>
+    objectRef: React.RefObject<HTMLDivElement | HTMLTextAreaElement | null>
 ) => {
-    const position = getClickRelativePositionAtSlide(
-        {
-            offsetX: object.position.x,
-            offsetY: object.position.y
-        },
-        containerRef.current
-    );
-    objectRef.current?.style.setProperty(
-        "--definedPositionX",
-        `${position.x}%`
-    );
-    objectRef.current?.style.setProperty("--definedPositionY", `${position.y}%`);
+    objectRef.current?.style.setProperty("--definedPositionX", `${object.position.x}%`);
+    objectRef.current?.style.setProperty("--definedPositionY", `${object.position.y}%`);
     objectRef.current?.style.setProperty("--definedWidth", `${object.size.width}%`);
     objectRef.current?.style.setProperty("--definedHeight", `${object.size.height}%`);
-    objectRef.current?.style.setProperty("--definedLayer", `${object.layer}`);
+    //objectRef.current?.style.setProperty("--definedLayer", `${object.layer}`);
 };
 
 const setObjectVariableProps = (
@@ -42,12 +30,11 @@ const setObjectVariableProps = (
 const useStyle =
     (
         object: SlideObject,
-        objectRef: React.RefObject<HTMLDivElement | HTMLTextAreaElement | null>,
-        containerRef: React.RefObject<HTMLDivElement | null>
+        objectRef: React.RefObject<HTMLDivElement | HTMLTextAreaElement | null>
     ) => {
         useEffect(
             () => {
-                setObjectConstantProps(object, objectRef, containerRef);
+                setObjectConstantProps(object, objectRef);
                 setObjectVariableProps(object, objectRef);
             }
         )

@@ -2,12 +2,14 @@ import { useEffect, useRef } from "react";
 import { useDB } from "../../hooks/db.hooks";
 import { useEditor } from "../../hooks/editor.hooks";
 import { useUser } from "../../hooks/user.hooks";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
     const { useDispatch } = useEditor();
-    const { setState: setPresentation } = useDispatch();
+    const { initializePresentation } = useDispatch();
     const { user } = useUser();
     const { getAll } = useDB();
+    const navigate = useNavigate();
     const containerRef = useRef<HTMLDivElement | null>(null);
     useEffect(
         () => {
@@ -32,10 +34,13 @@ const Home = () => {
                                 presentationPrev.addEventListener(
                                     "click",
                                     () => {
-                                        setPresentation(
-                                            presentationEntity.presentation
+                                        initializePresentation(
+                                            {
+                                                id: presentationEntity.id,
+                                                presentation: presentationEntity.presentation
+                                            }
                                         );
-                                        window.location.replace("/dev");
+                                        navigate("/dev");
                                         //TODO:
                                         //загружается в editor generalData
                                         //а не данные с db
@@ -57,19 +62,21 @@ const Home = () => {
             <p style={{ fontSize: "40px" }}>
                 {"Your email: " + user?.email}
             </p>
-            <div
-                ref={containerRef}
-                style={
-                    {
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-around",
-                        alignItems: "center",
-                        border: "5px solid black"
+            {
+                <div
+                    ref={containerRef}
+                    style={
+                        {
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "space-around",
+                            alignItems: "center",
+                            border: "5px solid black"
+                        }
                     }
-                }
-            >
-            </div>
+                >
+                </div>
+            }
         </>
     );
 }

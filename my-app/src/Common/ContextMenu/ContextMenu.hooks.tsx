@@ -30,17 +30,21 @@ const useContextMenuTemplate = (): useContextMenuTemplateResult => {
                     name: "Изменить фон",
                     clickHandler: () => {
                         enableModalWindow(
-                            "colorpicker",
-                            (colorCode: string) => {
-                                editBackground(
-                                    activeSlideId,
-                                    {
-                                        type: "color",
-                                        code: colorCode
-                                    }
-                                )
-                            },
-                            () => { }
+                            {
+                                type: "colorpicker",
+                                onApply: (colorCode: string) => {
+                                    editBackground(
+                                        {
+                                            id: activeSlideId,
+                                            newBackground: {
+                                                type: "color",
+                                                code: colorCode
+                                            }
+                                        }
+                                    )
+                                }, 
+                                onCancel: () => { }
+                            }                            
                         );
                         disableContextMenu();
                     },
@@ -49,13 +53,15 @@ const useContextMenuTemplate = (): useContextMenuTemplateResult => {
                     name: "Создать текст",
                     clickHandler: (position: Position) => {                //принимает event ПКМ по слайду
                         addObjectToSlide(
-                            activeSlideId,
-                            Services.createTextObject(
-                                {
-                                    id: Date.now().toString(),
-                                    position
-                                }
-                            )
+                            {
+                                slideId: activeSlideId,
+                                object: Services.createTextObject(
+                                    {
+                                        id: Date.now().toString(),
+                                        position
+                                    }
+                                )
+                            }                            
                         );
                         disableContextMenu();
                     }
@@ -64,14 +70,16 @@ const useContextMenuTemplate = (): useContextMenuTemplateResult => {
                     name: "Импортировать изображение",
                     clickHandler: (position: Position, uploadedImageUrl: string) => {   
                         addObjectToSlide(
-                            activeSlideId,
-                            Services.createImageObject(
-                                {
-                                    id: Date.now().toString(),
-                                    position,
-                                    src: uploadedImageUrl
-                                },
-                            )
+                            {
+                                slideId: activeSlideId,
+                                object: Services.createImageObject(
+                                    {
+                                        id: Date.now().toString(),
+                                        position,
+                                        src: uploadedImageUrl
+                                    },
+                                )
+                            }                    
                         );
                         disableContextMenu();
                     },
@@ -89,8 +97,10 @@ const useContextMenuTemplate = (): useContextMenuTemplateResult => {
                     name: "Удалить",
                     clickHandler: () => {
                         removeObjectsFromSlide(
-                            activeSlideId,
-                            selectedSlideObjects
+                            {
+                                id: activeSlideId,
+                                removingObjectsIds: selectedSlideObjects
+                            }
                         );
                         disableContextMenu();
                     }
@@ -107,7 +117,9 @@ const useContextMenuTemplate = (): useContextMenuTemplateResult => {
                     name: "Удалить",
                     clickHandler: ({ id: slideId }: Slide) => {
                         removeSlide(
-                            slideId
+                            {
+                                id: slideId
+                            }
                         );
                         disableContextMenu();
                     }

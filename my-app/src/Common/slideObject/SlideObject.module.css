@@ -3,8 +3,8 @@
    --DnDDragOffsetX: 0px;
    --DnDDragOffsetY: 0px;
    position: absolute;
-   left: calc(var(--definedPositionX) * var(--k));
-   top: calc(var(--definedPositionY) * var(--k));
+   left: var(--definedPositionX);
+   top: var(--definedPositionY);
    width: var(--definedWidth);
    height: var(--definedHeight);
    outline: 3px dashed green;
@@ -16,6 +16,7 @@
 
 .text {
    all: initial;
+   display: inline-block;
    overflow: hidden;
    color: var(--definedTextColor);
    font-family: var(--definedTextFontFamily);
@@ -36,11 +37,11 @@
 }
 
 .dragging{
-   outline: 10px solid red !important;
    will-change: transform;
 }
 
 .focusable.selected {
+   z-index: 10;
    box-shadow: 0 0 4px 3px rgb(128, 0, 255);
    outline: none;
 }

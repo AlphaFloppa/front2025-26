@@ -14,7 +14,7 @@ let presentation: Presentation = {
                 {
                     id: "obj_1_1",
                     type: "text",
-                    position: { x: 200, y: 400 },
+                    position: { x: 20, y: 40 },
                     size: { width: 10, height: 10 },
                     font: {
                         fontFamily: "Arial",
@@ -27,7 +27,7 @@ let presentation: Presentation = {
                 {
                     id: "obj_1_2",
                     type: "text",
-                    position: { x: 700, y: 500 },
+                    position: { x: 70, y: 50 },
                     size: { width: 7, height: 20 },
                     font: {
                         fontFamily: "Georgia",
@@ -40,23 +40,15 @@ let presentation: Presentation = {
                 {
                     id: "obj_1_3",
                     type: "image",
-                    position: { x: 500, y: 97 },
+                    position: { x: 50, y: 40 },
                     size: { width: 30, height: 30 },
                     src: "./src/assets/react.svg",
                     layer: 3
                 },
                 {
-                    id: "obj_1_4",
-                    type: "image",
-                    position: { x: 700, y: 800 },
-                    size: { width: 15, height: 8 },
-                    src: "https://share.google/images/sXVZJYBvAKGZTgPjt",
-                    layer: 4
-                },
-                {
                     id: "obj_1_5",
                     type: "text",
-                    position: { x: 500, y: 200 },
+                    position: { x: 50, y: 20 },
                     size: { width: 10, height: 20 },
                     font: {
                         fontFamily: "Courier New",

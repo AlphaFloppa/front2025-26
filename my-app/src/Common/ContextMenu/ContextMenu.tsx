@@ -4,8 +4,28 @@ import style from "./ContextMenu.module.css";
 import { useRef, useState, useEffect } from "react";
 import { verify } from "../../Store/Services/editFunctions";
 import { useEditor } from "../../hooks/editor.hooks";
+import { storage } from "../../lib/appwrite";
+import { ID } from "appwrite";
 
 const fileToUrl = (file: File): string => window.URL.createObjectURL(file);
+
+const saveFile = async (file: File) => {
+    const bucketId = "696675960022b4188fcc";
+    return storage.createFile(
+        {
+            bucketId,
+            fileId: ID.unique(),
+            file
+        }
+    ).then(
+        result => storage.getFileView(
+            {
+                bucketId,
+                fileId: result.$id
+            }
+        )
+    )
+}
 
 const definePosition = (position: Position): CSSProperties =>
 (
@@ -71,8 +91,11 @@ const ContextMenu = () => {
                                     onChange={
                                         (e) => {
                                             const importedFile = verify(e.currentTarget.files)[0];
-                                            storage.current = fileToUrl(importedFile);
-                                            clickHandler(position, storage.current);
+                                            saveFile(importedFile).then(
+                                                (url) => { 
+                                                    clickHandler(positionAtSlide, url)
+                                                }
+                                            )
                                             //TODO: get rid of storage
                                             //запись в useRef опции
                                         }}
