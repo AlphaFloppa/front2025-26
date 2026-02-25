@@ -10,35 +10,64 @@ const ignoreActionsList = [
     "disableModalWindow",
     "enableContextMenu",
     "disableContextMenu",
-    "nullifySlideSelection",
-    "nullifySlideObjectSelection",
-    "selectSlide",
-    "selectSlideObject",
-    "setState"
+    "selection/nullifySlideSelection",
+    "selection/nullifySlideObjectSelection",
+    "selection/selectSlideObject",
+    "slides/setState",
+    "presentationName/setState",
+    "presentationId/setId",
+    "selection/selectSlide"
 ];
+
+const eventTarget = new EventTarget();
 
 const DBMiddleWare: Middleware<{}, AppState, Dispatch<Action>> =
     ({ getState }) => (next) => (action) => {
         //@ts-ignore
         const { type } = action;
+        console.info(type);
         const { update } = useDB();
+        next(action);
         if (
             !ignoreActionsList.some(actionType => actionType === type)
         ) {
-            next(action);
-            const updatedState = getState();
-            const presentationId = updatedState.presentationId;
+            const { title, slides, presentationId } = getState();
             const updatedPresentation: Presentation = {
-                title: updatedState.title,
-                slides: updatedState.slides
+                title,
+                slides
             };
+            eventTarget.dispatchEvent(
+                new CustomEvent(
+                    "savingStart",
+                )
+            );
             update(
                 updatedPresentation,
                 presentationId
-            );
+            )
+                .then(
+                    () => {
+                        eventTarget.dispatchEvent(
+                            new CustomEvent(
+                                "savingComplete",
+                            )
+                        );
+                    }
+            )
+                /*.catch(
+                    (exception) => { 
+                        console.log(exception);
+                        eventTarget.dispatchEvent(
+                            new CustomEvent(
+                                "savingComplete",           //replace with savingerror
+                            )
+                        );
+                    }
+                )*/
         }
     }
 
 export {
-    DBMiddleWare
+    DBMiddleWare,
+    eventTarget
 }

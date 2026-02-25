@@ -10,6 +10,7 @@ export const {
     editText,
     editFontFamily,
     editFontSize,
+    editTextColor,
     editBackground
 } = slice.actions;
 

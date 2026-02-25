@@ -1,0 +1,33 @@
+:root {
+    --bg-slide-list: #1a1a1a;
+    --border-primary: #404040;
+}
+
+.previewArea {
+    width: 320px;
+    min-width: 280px;
+    max-width: 380px;
+    background: var(--color-bg-sidebar);
+    border-radius: 10px;
+    display: flex;
+    flex-flow: column nowrap;
+    overflow: hidden;
+    position: relative;
+    gap: 10px;
+}
+
+.upperContainer{
+    display: flex;
+    flex-flow: row nowrap;
+    padding: 0 8px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.buttonWrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 32px;
+    aspect-ratio: 1/1;
+}

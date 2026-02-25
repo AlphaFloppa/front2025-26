@@ -2,11 +2,11 @@ import { tablesDB } from "../lib/appwrite";
 import { ID, Query } from "appwrite";
 import type { Presentation } from "../Store/Model/presentation";
 
-const DATABASE_ID = "69406e3400342b3c267e"; 
+const DATABASE_ID = "696e5f47000e0f11c1d9"; 
 const TABLE_ID = "presentation"; 
 
 const useDB = () => { 
-    const create = async (presentation: Presentation, userId: string) => {
+    const create = async (presentation: Presentation) => {
         try {
             const { $id: id } = await tablesDB.createRow({
                 databaseId: DATABASE_ID,
@@ -15,10 +15,9 @@ const useDB = () => {
                 data: {
                     presentation: JSON.stringify(presentation),
                     presentationId: ID.unique(),
-                    userId,
                     $createdAt: Date.now().toString(),
                     $updatedAt: Date.now().toString()
-                }
+                },
             });
             return id;
         } catch (err) {
@@ -83,7 +82,7 @@ const useDB = () => {
         return response.rows.map(
             record => ({ 
                 id: record.$id,
-                presentation: JSON.parse(record.presentation)
+                presentationJSON: record.presentation
             })
         )
     }

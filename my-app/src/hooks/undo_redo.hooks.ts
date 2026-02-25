@@ -24,7 +24,8 @@ const useUndoRedo = () => {
             return () => {
                 window.removeEventListener("keyup", keyboardHandler);
             }
-        }
+        },
+        []
     );
 }
 

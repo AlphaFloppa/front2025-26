@@ -48,6 +48,12 @@ interface EditTextPayload {
     newText: string;
 }
 
+interface EditTextColorPayload {
+    id: string;
+    objectId: string;
+    newColor: string;
+}
+
 interface EditFontFamilyPayload {
     id: string;
     objectId: string;
@@ -127,6 +133,14 @@ const slideSlice = createSlice(
                     slideId: payload.id,
                     objectId: payload.objectId,
                     value: payload.newText
+                });
+            },
+
+            editTextColor: (state: State, { payload }: PayloadAction<EditTextColorPayload>) => {
+                return Services.editTextColor(state, {
+                    slideId: payload.id,
+                    objectId: payload.objectId,
+                    newColor: payload.newColor
                 });
             },
 

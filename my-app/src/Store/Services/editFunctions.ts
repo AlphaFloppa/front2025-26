@@ -23,35 +23,13 @@ function verify<T>(value: T | undefined | null) {
 }
 
 
-//move slide set by ids array
 function replaceSlide(slides: Slide[], payload: { order: string[] }): Slide[] {
     return payload.order.map(
-        slideId => verify(slides.find(slide => slide.id === slideId))          //verify
+        slideId => verify(slides.find(slide => slide.id === slideId))        
     );
 }
 
 function removeObjectsFromSlide(slides: Slide[], payload: { slideId: string, removingObjectsIds: string[] }): Slide[] {
-    function disposeImagesUrls(
-        slides: Slide[],
-        payload: { targetSlideId: string, objectsIds: string[] }
-    ): void {
-        slides.forEach(slide =>
-            slide.id === payload.targetSlideId
-            && slide.objects.filter(object =>
-                payload.objectsIds.find(objectId => objectId === object.id))
-                .forEach(
-                    object => { object.type === "image" && window.URL.revokeObjectURL(object.src) }
-                )
-        )
-    }
-
-    disposeImagesUrls(
-        slides,
-        {
-            targetSlideId: payload.slideId,
-            objectsIds: payload.removingObjectsIds
-        }
-    )
     return slides.map(
         slide => slide.id === payload.slideId
             ? {
@@ -64,7 +42,7 @@ function removeObjectsFromSlide(slides: Slide[], payload: { slideId: string, rem
     );
 }
 
-function addObjectToSlide(                    //одна функция под текст и картинку
+function addObjectToSlide(                    
     slides: Slide[],
     payload: { slideId: string, object: SlideObject }
 ): Slide[] {
@@ -143,7 +121,7 @@ function editText(
             {
                 ...slide,
                 objects: slide.objects.map(
-                    object => object.id == payload.objectId
+                    object => object.id == payload.objectId && object.type === "text"
                         ? {
                             ...object,
                             content: payload.value
@@ -204,6 +182,31 @@ function editFontSize(
             : slide
     )
 };
+
+function editTextColor(
+    slides: Slide[],
+    payload: {
+        slideId: string,
+        objectId: string,
+        newColor: string
+    }
+) { 
+    return slides.map(slide =>
+        slide.id == payload.slideId ?
+            {
+                ...slide,
+                objects: slide.objects.map(
+                    object => object.id == payload.objectId && object.type === "text"
+                        ? {
+                            ...object,
+                            color: payload.newColor
+                        }
+                        : object
+                )
+            } :
+            slide
+    )
+}
 
 function editBackground(
     slides: Slide[],
@@ -277,6 +280,7 @@ export {
     editFontFamily,
     editFontSize,
     editText,
+    editTextColor,
     addObjectToSlide,
     addSlide,
     moveSlideObject,

@@ -1,0 +1,64 @@
+.slideWrapper{
+    flex: 1;
+    gap: 0.5rem;
+    padding: 0 10%;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.slideWrapper::marker{
+    display: none;
+}
+
+.slideHeader {
+    text-align: center;
+    font-size: 0.8rem;
+    font-style: oblique;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: aliceblue;
+}
+
+.slideList{
+    all: unset;
+    padding-top: 10px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.slideContainer{
+    height: 22%;
+    width: 75%;
+    display: flex;
+    flex-flow: column nowrap;
+    position: relative;
+}
+
+.index{
+    position: absolute;
+    top: 35%;
+    height: 20%;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+    vertical-align: middle;
+}
+
+.catcher{
+    width: 100%;
+    height: 1.6rem;
+    background-color:transparent;
+}
+
+.noSlidesMessage{
+    color: white;
+    font-size: 2rem;
+    text-align: center;
+    font-weight: 600;
+    letter-spacing: 1px;
+}

@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useCallback, useState } from "react";
 import { account } from "../lib/appwrite";
 import { ID, type Models } from "appwrite";
 import { useEffect, useContext } from "react";
@@ -24,57 +24,72 @@ type UserContextProviderType = {
 const UserContextProvider: React.FC<UserContextProviderType> = ({ children }) => {
     const [user, setUser] = useState<Models.User | null>(null);
 
-    const login = async (email: string, password: string) => {
-        await account.createEmailPasswordSession({
-            email,
-            password
-        });
-
-        setUser(await account.get());
-        window.location.replace("/");                   //redirect на главную
-    }
-
-    const logout = async () => {
-        await account.deleteSession({
-            sessionId: "current"
-        });
-
-        setUser(null);
-    }
-
-    const register = async (email: string, password: string) => {
-        await account.create(
-            {
-                userId: ID.unique(),
+    const login = useCallback(
+        async (email: string, password: string) => {
+            await account.createEmailPasswordSession({
                 email,
                 password
-            }
-        );
+            });
 
-        await login(email, password);
-    }
+            setUser(await account.get());
+            window.location.replace("/");
+        },
+        [account, setUser]
+    );
 
-    const init = async() => {
-        try {
-            const user = await account.get();
-            setUser(user);
-        } catch (error) {
+    const logout = useCallback(
+        async () => {
+            await account.deleteSession({
+                sessionId: "current"
+            });
+
             setUser(null);
-        }
-    }
+        },
+        [account, setUser]
+    );
 
-    useEffect(() => {
-        init();
-    }, []);
+    const register = useCallback(
+        async (email: string, password: string) => {
+            await account.create(
+                {
+                    userId: ID.unique(),
+                    email,
+                    password
+                }   
+            );  
+
+            await login(email, password);
+        },
+        [account, login]
+    )
+
+    const init = useCallback(
+        async () => {
+            try {
+                const user = await account.get();
+                setUser(user);
+            } catch (error) {
+                setUser(null);
+            }
+        },
+        [account, setUser],
+    );
+
+    useEffect(
+        () => {
+            init();
+        },
+        []
+    );
 
     return (
         <userContext.Provider value={{ user, register, login, logout }}>
-            { children }
+            {children}
         </userContext.Provider>
     )
 }
 
-export { 
+export {
     useUser,
     UserContextProvider
 }

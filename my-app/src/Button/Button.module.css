@@ -1,0 +1,74 @@
+.button{
+    width: 100%;
+    aspect-ratio: 1/1;
+    border: none;
+    cursor: pointer;
+}
+
+.addSlide{
+    background: url("../assets/addSlideBtn.svg") center/cover no-repeat;
+}
+
+.addImage {
+    background: url("../assets/addImageBtn.svg") center/cover no-repeat;
+}
+
+.addText {
+    background: url("../assets/addText.svg") center/cover no-repeat;
+}
+
+.editFontFamily {
+    background: url("../assets/editFontFamilyBtn.svg") center/cover no-repeat;
+}
+
+.incrementFontSize {
+    background: url(../assets/plus.png) center/ 80% no-repeat;
+}
+
+.decrementFontSize{
+    background: url(../assets/minus.png) center/ 80% no-repeat;
+}
+
+.colorizeText{
+    background: url(../assets/colorize.png) center/cover no-repeat;
+}
+
+.applyBtn,
+.cancelBtn{
+    background-color: #333333;
+    color: #e0e0e0;
+    border: 4px solid white;
+    padding: 0.1rem 0.2rem;
+    border-radius: 0.75rem;
+    width: 30%;
+    height: 3rem;
+    transition: all 0.3s;
+}
+
+.applyBtn:hover,
+.cancelBtn:hover{
+    box-shadow: 0 0 0 2px white;
+    transform: scale(1.1);
+}
+
+.undo{
+    background: url(../assets/undo.png) center/ 80% no-repeat;
+}
+
+.redo{
+    background: url(../assets/undo.png) center/ 80% no-repeat;
+    transform: scaleX(-1);
+}
+
+.overview{
+    background: url(../assets/fullscreen.png) center/cover no-repeat;
+}
+
+.deleteSlide{
+    position: absolute;
+    width: 16%;
+    aspect-ratio: 1/1;
+    top: 32%;
+    left: 95%;
+    background: url("../assets/garbaged.png") center/ cover no-repeat;
+}

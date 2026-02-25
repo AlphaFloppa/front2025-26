@@ -1,0 +1,16 @@
+.dialog{
+    height: 80%;
+    position: absolute;
+    border: none;
+    border-radius: 0.8rem;
+    background-color: #333333;
+    aspect-ratio: 10/11;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.dialog::backdrop{
+    background-color: rgba(0, 0, 0, 0.5);
+}

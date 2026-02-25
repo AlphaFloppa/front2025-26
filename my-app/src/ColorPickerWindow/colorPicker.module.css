@@ -1,0 +1,21 @@
+.menu{
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: left;
+    align-items: center;
+    width: 90%;
+    aspect-ratio: 1/1;
+    position: relative;
+    gap: 2rem;
+}
+
+.buttonsGroup{
+    width: 100%;
+    height: fit-content;
+    padding: 0 5%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10%;
+}

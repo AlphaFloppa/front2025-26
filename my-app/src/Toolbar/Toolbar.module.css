@@ -1,0 +1,32 @@
+.toolbar {
+    background: var(--color-bg-toolbar);
+    padding: 0.6rem 1rem;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 20;
+}
+
+.section {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.toolbar section.add-object {
+    border-right: 2px solid wheat;
+}
+
+.toolbar section button {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

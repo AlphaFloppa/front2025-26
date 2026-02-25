@@ -1,0 +1,44 @@
+import type { SlideObject } from "../Store/Model/slideContent";
+import type React from "react";
+import { useCallback, useEffect } from "react";
+
+const setObjectConstantProps = (
+    object: SlideObject,
+    objectRef: React.RefObject<HTMLElement | null>
+) => {
+    objectRef.current?.style.setProperty("--definedPositionX", `${object.position.x}%`);
+    objectRef.current?.style.setProperty("--definedPositionY", `${object.position.y}%`);
+    objectRef.current?.style.setProperty("--definedWidth", `${object.size.width}%`);
+    objectRef.current?.style.setProperty("--definedHeight", `${object.size.height}%`);
+};
+
+const setObjectVariableProps = (
+    object: SlideObject,
+    objectRef: React.RefObject<HTMLElement | null>
+) => {
+    if (object.type === "text") {
+        objectRef.current?.style.setProperty("--definedTextColor", `${object.color}`);
+        objectRef.current?.style.setProperty("--definedTextFontFamily", `${object.font.fontFamily}`);
+        objectRef.current?.style.setProperty("--definedTextFontSize", `${object.font.fontSize / 20}em`);
+    }
+    else {
+        objectRef.current?.style.setProperty("--definedImageSource", `url(${object.src})`)
+    }
+};
+
+const useStyle =
+    (
+        object: SlideObject,
+        objectRef: React.RefObject<HTMLElement | null>
+    ) => {
+        useEffect(
+            () => {
+                setObjectConstantProps(object, objectRef);
+                setObjectVariableProps(object, objectRef);
+            }
+        )
+    };
+
+export {
+    useStyle
+}

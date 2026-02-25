@@ -1,14 +1,6 @@
 import React, { useEffect } from "react";
 import { useDnd, type dragHandlerArgs, type finishHandlerArgs, type startHandlerArgs } from "./dnd.hooks";
 
-//TODO: добавить will change из slideobject
-//накидать стилей на курсор
-//не работает редактирование текста
-
-type onStartArgs = {
-
-}
-
 type onResizeArgs = {
     deltaWidth: number,
     deltaHeight: number,
@@ -53,7 +45,7 @@ type ResizeArgs = {
         }
     },
     controlsOwnContainerRef: React.RefObject<HTMLDivElement | null>,
-    onStart: (payload: onStartArgs) => void,
+    onStart: (payload: {}) => void,
     onResize: (payload: onResizeArgs) => void,
     onFinish: (payload: onFinishArgs) => void
 }

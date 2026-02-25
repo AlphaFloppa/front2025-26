@@ -14,6 +14,7 @@ import slidesSetState, {
     editText,
     editFontFamily,
     editFontSize,
+    editTextColor,
     editBackground
 } from "../slides/actionCreators";
 
@@ -115,6 +116,7 @@ const useAppActions = () => {
             editText,
             editFontFamily,
             editFontSize,
+            editTextColor,
             editBackground,
             nullifySlideObjectSelection,
             nullifySlideSelection,

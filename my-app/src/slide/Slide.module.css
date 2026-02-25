@@ -1,0 +1,46 @@
+.colorBg{
+    background-color: var(--definedBgColor);
+}
+
+.imageBg{
+    background: var(--definedBgImage) center/cover no-repeat;
+}
+
+.slide{
+    position: relative;
+    border-radius: 0.7rem;
+    width: 100%;
+    aspect-ratio: 16/9;
+    overflow: hidden;
+    font-size: 1rem;
+}
+
+.mini{
+    font-size: 0.1716rem;
+}
+
+.mini *{
+    user-select: none;
+}
+
+.selected{
+    outline: 0.25rem solid rgb(0, 255, 38);
+}
+
+.static:not(.miniStatic){
+    cursor: none !important;
+    font-size: 1.38rem;
+}
+
+.static:not(.miniStatic) *{
+    cursor: naone !important;
+}
+
+.miniStatic{
+    font-size: 0.27rem;
+    cursor: pointer;
+}
+
+.miniStatic *{
+    cursor: pointer;
+}

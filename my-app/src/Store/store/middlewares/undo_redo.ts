@@ -137,6 +137,6 @@ export {
     undoRedoMiddleware
 }
 
-export type { 
+export type {
     State
 }

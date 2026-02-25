@@ -1,0 +1,62 @@
+.textWrapper,
+.image {
+   --DnDDragOffsetX: 0px;
+   --DnDDragOffsetY: 0px;
+   position: absolute;
+   left: var(--definedPositionX);
+   top: var(--definedPositionY);
+   width: var(--definedWidth);
+   height: var(--definedHeight);
+   outline: 3px dashed green;
+   border-radius: 0.1rem;
+   border: none;
+   user-select: none;
+   transform: translate3d(calc(-50% + var(--DnDDragOffsetX)), calc(-50% + var(--DnDDragOffsetY)), 0);
+}
+
+.text {
+   all: initial;
+   display: block;
+   overflow: hidden;
+   color: var(--definedTextColor);
+   font-family: var(--definedTextFontFamily);
+   font-size: var(--definedTextFontSize);
+   width: 100%;
+   height: 100%;
+   background-color: transparent;
+   resize: none;
+   border: none;
+   user-select: none;
+   -webkit-user-select: none;
+   -moz-user-select: none;
+   -ms-user-select: none;
+}
+
+.textWrapper.dragging .text::selection {
+   background-color: transparent;
+}
+
+.dragging {
+   will-change: transform;
+}
+
+.focusable.selected {
+   z-index: 10;
+   box-shadow: 0 0 4px 3px rgb(128, 0, 255);
+   outline: none;
+}
+
+.image {
+   background: var(--definedImageSource) center/cover no-repeat;
+}
+
+.static,
+.preview {
+   outline: none;
+}
+
+.static .image,
+.preview .image {
+   width: calc(0.21 * var(--definedWidth));
+   height: calc(0.21 * var(--definedHeight));
+}

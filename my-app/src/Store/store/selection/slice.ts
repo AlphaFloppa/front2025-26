@@ -52,7 +52,6 @@ const selectionSlice = createSlice({
         },
 
         setState: (_: State, { payload }: PayloadAction<SetStatePayload>) => {
-            //console.log("selection slice setState");
             return payload.state.selection;
         },
     },

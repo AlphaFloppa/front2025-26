@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Golos+Text:wght@400..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+.slidePreviewWrapper {
+    position: relative;
+    width: 350px;
+    height: fit-content;
+    cursor: pointer;
+    flex: 0 0 300px;
+    min-height: 200px;
+    background-image: linear-gradient(black 84%, white 84%);
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(1, 111, 154, 0.8);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.slidePreviewWrapper>span {
+    font-size: 1.35rem;
+    width: 100%;
+    color: black;
+    text-align: center;
+    display: inline-block;
+    font-family: "Roboto", 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-style: italic;
+    font-weight: 400;
+}
+
+.slidePreviewWrapper:hover {
+    transform: translateY(-6px);
+}
+
+.container {
+    margin-top: 10%;
+    width: 80svw;
+    height: 80svh;
+    background-color: transparent;
+    box-shadow: 0 0 10 15px rgb(169, 2, 169);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+}
+
+.header {
+    color: black;
+    font-size: 1.5rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+    position: absolute;
+    top: 82%;
+    width: 100%;
+}
+
+.createNewPresentationBtn {
+    border-radius: 0.7rem;
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: url(../assets/plus.png) center / 50% no-repeat;
+}
+
+.logoutBtn {
+    height: 1.5rem;
+    aspect-ratio: 1/1;
+    background: url(../assets/exit.png) center/cover no-repeat;
+}
+
+.exitWrapper {
+    position: absolute;
+    top: 8%;
+    left: 1.5%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+    border-radius: 0.5rem;
+    outline: 2px solid white;
+    padding: 0.25rem 0.5rem;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.email {
+    color: white;
+    position: absolute;
+    top: 2%;
+    left: 1.5%;
+    font-size: 1.8rem
+}

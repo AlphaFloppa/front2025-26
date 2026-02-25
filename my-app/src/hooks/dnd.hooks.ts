@@ -1,13 +1,6 @@
 import React, { useState, useRef, useCallback } from "react";
 import type { Position } from "../Store/Model/slideContent.js";
-/*
-onMouseDown накидывается на subjects,
-onMouseMove и onMouseUp на слайд
-*/
 
-//offset-смещения за тик в px
-//containerRef.current-ссылка на сам слайд
-//userRef - ссылка на объект перетаскивания
 type startHandlerArgs<containerType extends HTMLElement | null, userType extends HTMLElement | null> = {
     startOffsetX: number,
     startOffsetY: number,
@@ -36,13 +29,9 @@ type addDndArgs<containerType extends HTMLElement | null, userType extends HTMLE
 }
 
 type DnDProps<containerType extends HTMLElement | null, userType extends HTMLElement | null> = {
-    //реф container-объекта(слайд)
     containerRef?: React.RefObject<containerType>,
-    //Принимает координаты mousedown по любому объекту(начала перетаскивания), реф контейнера и реф на объект
     onStart?: (payload: startHandlerArgs<containerType, userType>) => void,
-    //Принимает координаты смещения за тик, реф контейнера и реф на объект 
     onDrag?: (payload: dragHandlerArgs<containerType, userType>) => void,
-    //Принимает координаты mouseup относительно контейнера, реф контейнера и реф на объект
     onFinish?: (payload: finishHandlerArgs<containerType, userType>) => void
 }
 
@@ -52,7 +41,6 @@ type DndResult<containerType extends HTMLElement | null, userType extends HTMLEl
 
 const useDnd = <containerType extends HTMLElement | null, userType extends HTMLElement | null>(
     {
-        containerRef,
         onStart,
         onDrag,
         onFinish
@@ -61,7 +49,6 @@ const useDnd = <containerType extends HTMLElement | null, userType extends HTMLE
     const [isDragging, setIsDragging] = useState(false);
     const startPosition = useRef<Position>({ x: 0, y: 0 });
 
-    //Накидывается на сам объект
     const mouseDownHandler = useCallback(
         (
             e: MouseEvent,
@@ -75,17 +62,14 @@ const useDnd = <containerType extends HTMLElement | null, userType extends HTMLE
             const { clientX, clientY } = e;
             setIsDragging(true);
 
-            //относительные смещения по слайду
             const startOffsetX = clientX - (containerRef.current?.getBoundingClientRect().x ?? 0);
             const startOffsetY = clientY - (containerRef.current?.getBoundingClientRect().y ?? 0);
 
-            //установка координат начала процесса
             startPosition.current = {
                 x: startOffsetX,
                 y: startOffsetY
             }
 
-            //вызов handler процесса
             onStart?.({
                 startOffsetX,
                 startOffsetY,
@@ -103,11 +87,9 @@ const useDnd = <containerType extends HTMLElement | null, userType extends HTMLE
             usersRefs: React.RefObject<userType>[]
         ) => {
 
-            //глобальные координаты смещения за текущий прогресс drag (не тиковые)
             const globalOffsetX = (x - (containerRef.current?.getBoundingClientRect().x ?? 0)) - startPosition.current.x;
             const globalOffsetY = (y - (containerRef.current?.getBoundingClientRect().y ?? 0)) - startPosition.current.y;
 
-            //вызов handler процесса
             onDrag?.({
                 globalOffsetX,
                 globalOffsetY,
@@ -127,7 +109,7 @@ const useDnd = <containerType extends HTMLElement | null, userType extends HTMLE
             const { clientX, clientY } = e;
             const finishOffsetX = ((clientX - (containerRef.current?.getBoundingClientRect().x ?? 0)) - startPosition.current.x);
             const finishOffsetY = ((clientY - (containerRef.current?.getBoundingClientRect().y ?? 0)) - startPosition.current.y);
-            //вызов handler процесса
+
             onFinish?.({
                 finishOffsetX,
                 finishOffsetY,
@@ -188,12 +170,6 @@ const useDnd = <containerType extends HTMLElement | null, userType extends HTMLE
         },
         [isDragging, mouseDownHandler, mouseMoveHandler, mouseUpHandler]
     );
-
-    /*useEffect(
-        () => { 
-            console.log(containerRef);
-        }
-    )*/
 
     return {
         listenerEffect
